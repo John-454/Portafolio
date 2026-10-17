@@ -1,0 +1,18 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@data/*": ["src/data/*"],
+      "@utils/*": ["src/utils/*"],
+      "@content/*": ["src/content/*"]
+    },
+    "types": ["astro/client", "vite/client", "vitest/globals"]
+  },
+  "include": ["src/**/*", "astro.config.mjs", "tailwind.config.mjs", ".astro/types.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

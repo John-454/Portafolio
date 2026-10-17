@@ -1,0 +1,181 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionTitle from '@/components/ui/SectionTitle.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Card from '@/components/ui/Card.astro';
+import Stack from '@/components/ui/Stack.astro';
+import { personalInfo, siteConfig } from '@/data/personal';
+
+const lastUpdated = '22 de septiembre de 2026';
+
+const sections = [
+  {
+    title: '1. Aceptación de los términos',
+    body: [
+      'Al acceder y utilizar este sitio web aceptas los presentes Términos y Condiciones de uso. Si no estás de acuerdo, te pedimos abstenerse de utilizar el sitio.',
+      'El uso implica la aceptación plena y sin reservas de la versión vigente de estos términos en el momento del acceso.',
+    ],
+  },
+  {
+    title: '2. Naturaleza del sitio',
+    body: [
+      `${siteConfig.name} es un portafolio personal de carácter informativo y profesional. Su finalidad es presentar proyectos, experiencia, servicios y vías de contacto.`,
+      'El sitio no constituye una oferta contractual vinculante, una propuesta comercial firme ni un servicio transaccional. No se realizan pagos ni registros a través de él.',
+    ],
+  },
+  {
+    title: '3. Propiedad intelectual',
+    body: [
+      `El diseño, la estructura, el código propio del portafolio y los textos originales pertenecen a ${personalInfo.name}, salvo indicación en contrario.`,
+      'Las marcas, logotipos, nombres de productos o servicios de terceros que aparezcan en el sitio pertenecen a sus respectivos titulares y se citan con fines puramente descriptivos.',
+    ],
+    items: [
+      'Los fragmentos de código publicados con licencia abierta se rigen por la licencia indicada en su respectivo repositorio de GitHub.',
+      'Las imágenes, capturas y logotipos de terceros se utilizan bajo licencia de sus autores o bajo uso legítimo referencial.',
+      'No se permite la reproducción total o parcial de los contenidos con fines comerciales sin autorización previa por escrito.',
+    ],
+  },
+  {
+    title: '4. Uso permitido',
+    body: [
+      'Te comprometes a utilizar el sitio de forma lícita, respetuosa y sin causar daños, sobrecargas o interferencias.',
+      'Queda prohibido intentar acceder de forma no autorizada a sistemas, realizar ingeniería inversa, extraer contenidos de forma masiva mediante automatización, o suplantar la identidad del titular.',
+    ],
+  },
+  {
+    title: '5. Exactitud de la información',
+    body: [
+      'Se procura que la información publicada sea veraz y esté actualizada, pero no se garantiza que esté libre de errores, omisiones o desactualizaciones.',
+      'Los proyectos, tecnologías y niveles de habilidad descritos reflejan el estado al momento de su publicación y pueden evolucionar con el tiempo.',
+      'La experiencia y credenciales se presentan de forma honesta; cuando un dato no aplica, simplemente no se publica.',
+    ],
+  },
+  {
+    title: '6. Enlaces a sitios de terceros',
+    body: [
+      'El sitio puede contener enlaces a repositorios, redes profesionales u otros recursos externos. Estos enlaces se ofrecen por conveniencia y no implican aprobación ni control sobre su contenido.',
+      'No nos hacemos responsables de la disponibilidad, exactitud, políticas de privacidad o prácticas de dichos sitios externos. La navegación en ellos es responsabilidad del usuario.',
+    ],
+  },
+  {
+    title: '7. Limitación de responsabilidad',
+    body: [
+      'El sitio se ofrece "tal cual", sin garantías de ningún tipo, expresas o implícitas, incluidas las de comerciabilidad, idoneidad para un fin determinado o no infracción.',
+      `${personalInfo.name} no será responsable por daños directos o indirectos derivados del uso o la imposibilidad de uso del sitio, incluidos errores de contenido, interrupciones o daños por virus.`,
+    ],
+  },
+  {
+    title: '8. Formulario de contacto',
+    body: [
+      'El envío del formulario no establece ninguna relación laboral, contractual ni de confidencialidad. El contenido del mensaje se tratará conforme a la Política de Privacidad.',
+      'No se garantiza respuesta en plazos concretos, aunque se procura responder en un máximo de 24 a 48 horas hábiles.',
+      'No envíes por este medio información sensible como datos financieros, credenciales o documentos de identidad.',
+    ],
+  },
+  {
+    title: '9. Modificaciones',
+    body: [
+      'Podemos actualizar estos términos en cualquier momento sin previo aviso, por cambios legales, técnicos o de contenido del sitio.',
+      'La versión vigente estará siempre disponible en esta página, indicando su fecha de última actualización.',
+    ],
+  },
+  {
+    title: '10. Ley aplicable y jurisdicción',
+    body: [
+      'Estos términos se rigen por la legislación de la República de Colombia. Cualquier controversia se someterá a los tribunales competentes de la ciudad de residencia del titular, salvo que la normativa aplicable disponga otra cosa.',
+      'Si alguna disposición se considerara inválida o inaplicable, el resto de los términos mantendrán su plena vigencia y efecto.',
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Términos y Condiciones"
+  description="Términos y condiciones de uso del portafolio de John Chitan. Uso permitido, propiedad intelectual, enlaces externos, limitación de responsabilidad y legislación aplicable."
+  image={siteConfig.ogImage}
+>
+  <Section id="terms" bg="surface" class="pt-24">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div class="mb-10">
+        <SectionTitle level={1} icon="file-text" eyebrow="Legal">
+          Términos y Condiciones
+          <p slot="description">
+            Reglas de uso de este sitio web, derechos de propiedad intelectual y alcance de la
+            información publicada.
+          </p>
+        </SectionTitle>
+        <Typography as="p" size="sm" color="muted" class="mt-4">
+          Última actualización: {lastUpdated}
+        </Typography>
+      </div>
+
+      <Stack space="lg">
+        {
+          sections.map((section) => {
+            return (
+              <Card padded>
+                <Typography as="h2" size="base" weight="bold" color="heading" class="mb-3">
+                  {section.title}
+                </Typography>
+                <Stack space="sm">
+                  {section.body.map((paragraph) => {
+                    return (
+                      <Typography as="p" color="muted">
+                        {paragraph}
+                      </Typography>
+                    );
+                  })}
+                </Stack>
+                {section.items && (
+                  <ul class="mt-4 space-y-2" role="list">
+                    {section.items.map((item) => {
+                      return (
+                        <li class="flex items-start gap-2 text-fluid-sm text-slate-600 dark:text-slate-300">
+                          <svg
+                            class="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-500"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          <span>{item}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </Card>
+            );
+          })
+        }
+      </Stack>
+
+      <Card
+        padded
+        class="mt-10 border-brand-200 bg-brand-50 dark:border-brand-800 dark:bg-brand-950/40"
+      >
+        <Typography as="h2" size="base" weight="bold" color="heading" class="mb-2">
+          ¿Tienes preguntas sobre estos términos?
+        </Typography>
+        <Typography as="p" color="muted">
+          Escríbe a{' '}
+          <a
+            href={`mailto:${personalInfo.email}`}
+            class="font-medium text-brand-600 hover:underline dark:text-brand-400"
+          >
+            {personalInfo.email}
+          </a>{' '}
+          y te atenderemos lo antes posible.
+        </Typography>
+      </Card>
+    </div>
+  </Section>
+</BaseLayout>

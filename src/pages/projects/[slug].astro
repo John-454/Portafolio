@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectDetail from '@/components/project/ProjectDetail.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project: CollectionEntry<'projects'>) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const slug = project.slug;
+
+const pageDescription = data.description;
+const pageUrl = `https://johnchitan.dev/projects/${slug}/`;
+const pageImage = data.images?.[0]
+  ? `https://johnchitan.dev${data.images[0]}`
+  : 'https://johnchitan.dev/images/og-portfolio.png';
+---
+
+<BaseLayout
+  title={data.name}
+  description={pageDescription}
+  url={pageUrl}
+  image={pageImage}
+  type="article"
+  publishedTime={data.startDate}
+  modifiedTime={data.endDate}
+  tags={data.technologies}
+>
+  <ProjectDetail project={project} />
+</BaseLayout>

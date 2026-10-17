@@ -1,0 +1,13 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Services from '@/components/sections/Services.astro';
+import { siteConfig } from '@/data/personal';
+---
+
+<BaseLayout
+  title="Servicios"
+  description="Servicios de desarrollo full stack, APIs, aplicaciones empresariales, integración de bases de datos, automatización, IA aplicada y desarrollo seguro."
+  image={siteConfig.ogImage}
+>
+  <Services />
+</BaseLayout>

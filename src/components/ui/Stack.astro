@@ -1,0 +1,20 @@
+---
+import { cn } from '@/utils/helpers';
+interface Props {
+  children?: any;
+  class?: string;
+  space?: 'sm' | 'md' | 'lg' | 'xl';
+  axis?: 'y' | 'x';
+  /** Atributos HTML adicionales (role, aria-*, data-*). */
+  [key: string]: any;
+}
+
+const { children, class: className = '', space = 'md', axis = 'y', ...rest } = Astro.props;
+
+const spaces = { sm: 'space-y-3', md: 'space-y-6', lg: 'space-y-8', xl: 'space-y-12' };
+const xSpaces = { sm: 'space-x-3', md: 'space-x-4', lg: 'space-x-6', xl: 'space-x-8' };
+---
+
+<div class={cn(axis === 'y' ? spaces[space] : xSpaces[space], className)} {...rest}>
+  <slot>{children}</slot>
+</div>

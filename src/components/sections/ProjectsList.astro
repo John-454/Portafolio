@@ -1,0 +1,257 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import { cn } from '@/utils/helpers';
+import Section from '@/components/ui/Section.astro';
+import SectionTitle from '@/components/ui/SectionTitle.astro';
+import Flex from '@/components/ui/Flex.astro';
+import ProjectCard from '@/components/project/ProjectCard.astro';
+import Input from '@/components/ui/Input.astro';
+import Button from '@/components/ui/Button.astro';
+
+const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
+---
+
+<Section id="projects" bg="muted">
+  <div class="mb-10">
+    <SectionTitle level={2} icon="folder" eyebrow="Portafolio completo">
+      Todos los Proyectos
+      <p slot="description">
+        Lista completa de proyectos de desarrollo de software. Filtra por tecnología o estado para
+        encontrar lo que buscas.
+      </p>
+    </SectionTitle>
+  </div>
+
+  <!-- Filters -->
+  <div class="mb-8">
+    <Flex gap="md" wrap class="mb-4" role="group" aria-label="Filtros de proyectos">
+      <label
+        for="project-search"
+        class="flex items-center gap-2 text-fluid-sm font-medium text-slate-700 dark:text-slate-300"
+      >
+        <span>Buscar:</span>
+        <Input
+          id="project-search"
+          type="search"
+          placeholder="Filtrar por nombre, tecnología..."
+          class="w-64"
+          aria-label="Buscar proyectos"
+        />
+      </label>
+
+      <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por estado">
+        <span class="text-fluid-sm font-medium text-slate-700 dark:text-slate-300">Estado:</span>
+        <button
+          data-filter="all"
+          class={cn(
+            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all',
+            'bg-brand-600 text-white'
+          )}
+          aria-pressed="true"
+        >
+          Todos
+        </button>
+        <button
+          data-filter="En producción"
+          class={cn(
+            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all',
+            'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30'
+          )}
+          aria-pressed="false"
+        >
+          En producción
+        </button>
+        <button
+          data-filter="En desarrollo"
+          class={cn(
+            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all',
+            'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30'
+          )}
+          aria-pressed="false"
+        >
+          En desarrollo
+        </button>
+        <button
+          data-filter="Completado"
+          class={cn(
+            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all',
+            'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30'
+          )}
+          aria-pressed="false"
+        >
+          Completado
+        </button>
+      </div>
+    </Flex>
+
+    <!-- Tech filter chips -->
+    <div
+      id="tech-filters"
+      class="flex flex-wrap gap-2"
+      role="group"
+      aria-label="Filtrar por tecnología"
+    >
+    </div>
+  </div>
+
+  <!-- Projects Grid -->
+  <div
+    id="projects-grid"
+    class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+    role="list"
+    aria-label="Lista de proyectos"
+  >
+    {
+      projects.map((project) => {
+        return <ProjectCard project={project} />;
+      })
+    }
+  </div>
+
+  <!-- Empty state -->
+  <div id="empty-state" class="hidden py-16 text-center">
+    <p class="text-lg text-slate-600 dark:text-slate-400">
+      No se encontraron proyectos con los filtros actuales.
+    </p>
+    <Button id="clear-filters" variant="ghost" class="mt-4" icon="x" iconPosition="right">
+      Limpiar filtros
+    </Button>
+  </div>
+</Section>
+
+<script>
+  // This script runs on the client
+  document.addEventListener('DOMContentLoaded', () => {
+    const projects = document.querySelectorAll('#projects-grid > article');
+    const filterBtns = document.querySelectorAll<HTMLElement>('.filter-btn');
+    const searchInput = document.getElementById('project-search') as HTMLInputElement;
+    const techFiltersContainer = document.getElementById('tech-filters');
+    const clearBtn = document.getElementById('clear-filters');
+    const emptyState = document.getElementById('empty-state');
+    const grid = document.getElementById('projects-grid');
+
+    // Estos nodos son necesarios para el filtrado: sin ellos no hay nada
+    // que actualizar, así que se sale en lugar de fallar por null.
+    if (!techFiltersContainer || !emptyState || !grid || !searchInput) return;
+
+    // Un solo set de clases por chip/botón: activo = brand sólido, reposo =
+    // gris. El estado real vive en `aria-pressed`; esto es sólo estética.
+    const STATUS_ACTIVE =
+      'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all bg-brand-600 text-white';
+    const STATUS_IDLE =
+      'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30';
+    const TECH_ACTIVE =
+      'tech-filter px-2.5 py-1 rounded-full text-fluid-xs font-medium bg-brand-600 text-white';
+    const TECH_IDLE =
+      'tech-filter px-2.5 py-1 rounded-full text-fluid-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-all';
+
+    function setPressed(btn: HTMLElement, active: boolean, activeClass: string, idleClass: string) {
+      btn.setAttribute('aria-pressed', String(active));
+      btn.className = active ? activeClass : idleClass;
+    }
+
+    // Collect all unique technologies
+    const allTechs = new Set<string>();
+    projects.forEach((project) => {
+      const techs = project.querySelectorAll('[role="listitem"]');
+      techs.forEach((t) => allTechs.add(t.textContent?.trim() || ''));
+    });
+
+    // Render tech filter chips
+    const sortedTechs = Array.from(allTechs).sort();
+    sortedTechs.forEach((tech) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.dataset.tech = tech;
+      btn.className = TECH_IDLE;
+      btn.setAttribute('aria-pressed', 'false');
+      btn.textContent = tech;
+      techFiltersContainer.appendChild(btn);
+    });
+
+    let activeTechFilters = new Set<string>();
+
+    function applyFilters() {
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const activeStatusBtn = document.querySelector(
+        '.filter-btn[aria-pressed="true"]'
+      ) as HTMLElement | null;
+      const activeStatus = activeStatusBtn?.dataset.filter || 'all';
+
+      let visibleCount = 0;
+
+      projects.forEach((project) => {
+        const title = project.querySelector('h3')?.textContent?.toLowerCase() || '';
+        const description = project.querySelector('p')?.textContent?.toLowerCase() || '';
+        const techs = Array.from(project.querySelectorAll('[role="listitem"]')).map(
+          (t) => t.textContent?.toLowerCase() || ''
+        );
+        const statusCard = project.querySelector('[data-status]') as HTMLElement | null;
+        const status = statusCard?.dataset.status || '';
+
+        const matchesSearch =
+          !searchTerm ||
+          title.includes(searchTerm) ||
+          description.includes(searchTerm) ||
+          techs.some((t) => t.includes(searchTerm));
+        const matchesStatus = activeStatus === 'all' || status === activeStatus;
+        const matchesTech =
+          activeTechFilters.size === 0 ||
+          Array.from(activeTechFilters).some((tf) => techs.includes(tf.toLowerCase()));
+
+        const show = matchesSearch && matchesStatus && matchesTech;
+        project.classList.toggle('hidden', !show);
+        if (show) visibleCount++;
+      });
+
+      emptyState?.classList.toggle('hidden', visibleCount > 0);
+      grid?.classList.toggle('hidden', visibleCount === 0);
+    }
+
+    // Status filter
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => setPressed(b, false, STATUS_ACTIVE, STATUS_IDLE));
+        setPressed(btn, true, STATUS_ACTIVE, STATUS_IDLE);
+        applyFilters();
+      });
+    });
+
+    // Tech filter (multi-selección)
+    techFiltersContainer.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.tech-filter') as HTMLElement | null;
+      const tech = btn?.dataset.tech;
+      if (!btn || !tech) return;
+      const alreadyActive = activeTechFilters.has(tech);
+      if (alreadyActive) activeTechFilters.delete(tech);
+      else activeTechFilters.add(tech);
+      setPressed(btn, !alreadyActive, TECH_ACTIVE, TECH_IDLE);
+      applyFilters();
+    });
+
+    // Search
+    searchInput.addEventListener('input', debounce(applyFilters, 200));
+
+    // Limpiar todos los filtros (estado vacío): búsqueda, chips y estado.
+    clearBtn?.addEventListener('click', () => {
+      searchInput.value = '';
+      activeTechFilters.clear();
+      filterBtns.forEach((b) =>
+        setPressed(b, b.dataset.filter === 'all', STATUS_ACTIVE, STATUS_IDLE)
+      );
+      techFiltersContainer
+        .querySelectorAll<HTMLElement>('.tech-filter')
+        .forEach((chip) => setPressed(chip, false, TECH_ACTIVE, TECH_IDLE));
+      applyFilters();
+    });
+
+    function debounce(fn: Function, delay: number) {
+      let timeoutId: ReturnType<typeof setTimeout>;
+      return (...args: any[]) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn(...args), delay);
+      };
+    }
+  });
+</script>

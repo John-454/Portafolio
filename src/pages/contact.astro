@@ -1,0 +1,13 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Contact from '@/components/sections/Contact.astro';
+import { siteConfig } from '@/data/personal';
+---
+
+<BaseLayout
+  title="Contacto"
+  description="Contacta conmigo para proyectos de desarrollo full stack, APIs, arquitectura de software, seguridad aplicada o consultoría técnica."
+  image={siteConfig.ogImage}
+>
+  <Contact />
+</BaseLayout>

@@ -1,0 +1,141 @@
+---
+import Section from '@/components/ui/Section.astro';
+import SectionTitle from '@/components/ui/SectionTitle.astro';
+import Flex from '@/components/ui/Flex.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Badge from '@/components/ui/Badge.astro';
+import Button from '@/components/ui/Button.astro';
+import HighlightCard from '@/components/ui/HighlightCard.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { personalInfo } from '@/data/personal';
+import { skills } from '@/data/skills';
+---
+
+<Section id="about" bg="surface">
+  <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
+    <!-- Left: Profile -->
+    <div class="relative">
+      <div
+        class="relative mx-auto aspect-square max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800 md:max-w-md lg:mx-0"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-brand-500/10 to-accent-500/10"
+          aria-hidden="true"
+        >
+        </div>
+        <div class="relative flex h-full items-center justify-center">
+          <div
+            class="flex h-48 w-48 select-none items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-accent-500 font-heading text-5xl font-bold text-white md:h-64 md:w-64 md:text-7xl"
+            aria-hidden="true"
+          >
+            {
+              personalInfo.name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating badges -->
+      <div
+        class="absolute -bottom-6 -left-6 flex flex-wrap gap-2 md:-bottom-8 md:-left-8"
+        aria-hidden="true"
+      >
+        <Badge variant="tech" label="Full Stack" size="md" />
+        <Badge variant="success" label="TypeScript First" size="md" />
+        <Badge variant="info" label="Security Focused" size="md" />
+      </div>
+    </div>
+
+    <!-- Right: Content -->
+    <div class="space-y-8">
+      <SectionTitle level={2} icon="user" eyebrow="Perfil profesional">
+        Sobre Mí
+        <p slot="description">{personalInfo.extendedBio}</p>
+      </SectionTitle>
+
+      <!-- Highlights -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <HighlightCard
+          icon="target"
+          title="Enfoque Actual"
+          description="Apps seguras, escalables y mantenibles con TypeScript end-to-end"
+        />
+        <HighlightCard
+          icon="trending-up"
+          title="Evolución"
+          description="Application Security, DevSecOps, Cloud Security, IA aplicada"
+        />
+        <HighlightCard
+          icon="zap"
+          title="Metodología"
+          description="Clean Architecture, TDD, CI/CD, Code Review, Docs"
+        />
+        <HighlightCard
+          icon="handshake"
+          title="Colaboración"
+          description="Pair programming, mentoring, knowledge sharing, open source"
+        />
+      </div>
+
+      <!-- Top Skills -->
+      <div>
+        <Typography
+          as="h3"
+          size="lg"
+          weight="semibold"
+          color="heading"
+          class="mb-4 flex items-center gap-2"
+        >
+          <span
+            class="rounded-lg bg-brand-100 p-2 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400"
+            aria-hidden="true"
+          >
+            <Icon name="zap" />
+          </span>
+          Competencias Principales
+        </Typography>
+        <Flex gap="sm" wrap role="list" aria-label="Top skills">
+          {
+            skills
+              .filter((s) => s.level === 'advanced' || s.level === 'expert')
+              .slice(0, 10)
+              .map((skill) => {
+                return <Badge variant="tech" label={skill.name} size="sm" />;
+              })
+          }
+        </Flex>
+      </div>
+
+      <!-- CTAs -->
+      <Flex gap="md" wrap class="pt-4">
+        <>
+          <Button
+            href="/contact/"
+            variant="primary"
+            size="lg"
+            icon="message-circle"
+            iconPosition="left"
+          >
+            Trabajemos juntos
+          </Button>
+          <Button href="/cv.pdf" variant="outline" size="lg" icon="download" iconPosition="left">
+            Descargar CV
+          </Button>
+          <Button
+            href="https://github.com/John-454"
+            variant="ghost"
+            size="lg"
+            external
+            icon="github"
+            iconPosition="left"
+          >
+            Ver código en GitHub
+          </Button>
+        </>
+      </Flex>
+    </div>
+  </div>
+</Section>

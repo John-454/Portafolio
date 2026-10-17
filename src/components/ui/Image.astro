@@ -1,0 +1,65 @@
+---
+import { cn } from '@/utils/helpers';
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  sizes?: string;
+  quality?: number;
+  format?: 'avif' | 'webp' | 'jpg' | 'png';
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  class: className = '',
+  loading = 'lazy',
+  priority = false,
+  sizes,
+  quality = 80,
+  format = 'webp',
+  ...rest
+} = Astro.props;
+---
+
+<img
+  src={src}
+  alt={alt}
+  width={width}
+  height={height}
+  loading={priority ? 'eager' : loading}
+  fetchpriority={priority ? 'high' : 'auto'}
+  decoding="async"
+  sizes={sizes}
+  class={cn('block max-w-full h-auto', className)}
+  {...rest}
+/>
+
+<style>
+  img {
+    @apply transition-opacity duration-300;
+  }
+  img[loading='lazy'] {
+    opacity: 0;
+  }
+  img[loading='lazy'].loaded {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('img[loading="lazy"]').forEach((el) => {
+    const img = el as HTMLImageElement;
+    if (img.complete) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+    }
+  });
+</script>

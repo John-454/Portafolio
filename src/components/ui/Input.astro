@@ -1,0 +1,141 @@
+---
+import { cn } from '@/utils/helpers';
+
+interface Props {
+  /** Opcional: cuando el campo lleva `aria-label` en su lugar (p. ej. buscador). */
+  label?: string;
+  id: string;
+  type?: 'text' | 'email' | 'url' | 'textarea' | 'search' | 'password' | 'tel';
+  required?: boolean;
+  placeholder?: string;
+  value?: string;
+  error?: string;
+  hint?: string;
+  class?: string;
+  autocomplete?: string;
+  rows?: number;
+  name?: string;
+  /** Atributos HTML adicionales (data-*, aria-*). */
+  [key: string]: any;
+}
+
+const {
+  label,
+  id,
+  type = 'text',
+  required = false,
+  placeholder,
+  value,
+  error,
+  hint,
+  class: className = '',
+  autocomplete,
+  rows = 4,
+  name,
+  ...rest
+} = Astro.props;
+
+const isTextarea = type === 'textarea';
+---
+
+<div class={cn('w-full', className)}>
+  {
+    label && (
+      <label
+        for={id}
+        class="mb-1.5 block text-fluid-sm font-medium text-slate-700 dark:text-slate-300"
+      >
+        {label}
+        {required && (
+          <span class="ml-1 text-red-500" aria-hidden="true">
+            *
+          </span>
+        )}
+      </label>
+    )
+  }
+
+  {
+    isTextarea ? (
+      <textarea
+        id={id}
+        name={id}
+        rows={rows}
+        placeholder={placeholder}
+        value={value}
+        required={required}
+        autocomplete={autocomplete}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
+        class={cn(
+          'w-full rounded-xl border px-4 py-3 transition-colors duration-fast',
+          'bg-white dark:bg-slate-800',
+          'border-slate-300 dark:border-slate-600',
+          'text-slate-900 dark:text-slate-100',
+          'placeholder:text-slate-400 dark:placeholder:text-slate-500',
+          'focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-500',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          error && 'border-red-500 focus:ring-red-500',
+          className
+        )}
+        {...rest}
+      />
+    ) : (
+      <input
+        type={type}
+        id={id}
+        name={id}
+        placeholder={placeholder}
+        value={value}
+        required={required}
+        autocomplete={autocomplete}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
+        class={cn(
+          'w-full rounded-xl border px-4 py-3 transition-colors duration-fast',
+          'bg-white dark:bg-slate-800',
+          'border-slate-300 dark:border-slate-600',
+          'text-slate-900 dark:text-slate-100',
+          'placeholder:text-slate-400 dark:placeholder:text-slate-500',
+          'focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-500',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          error && 'border-red-500 focus:ring-red-500',
+          className
+        )}
+        {...rest}
+      />
+    )
+  }
+
+  {
+    error && (
+      <p
+        id={`${id}-error`}
+        class="mt-1.5 flex items-center gap-1 text-fluid-xs text-red-500"
+        role="alert"
+      >
+        <svg
+          class="h-3.5 w-3.5 flex-shrink-0"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        {error}
+      </p>
+    )
+  }
+
+  {
+    hint && !error && (
+      <p id={`${id}-hint`} class="mt-1.5 text-fluid-xs text-slate-500 dark:text-slate-400">
+        {hint}
+      </p>
+    )
+  }
+</div>

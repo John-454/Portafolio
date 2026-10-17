@@ -1,0 +1,192 @@
+---
+import { personalInfo } from '@/data/personal';
+import Button from '@/components/ui/Button.astro';
+import Section from '@/components/ui/Section.astro';
+import Flex from '@/components/ui/Flex.astro';
+import Typography from '@/components/ui/Typography.astro';
+import StatCard from './StatCard.astro';
+import CodeSnippet from './CodeSnippet.astro';
+---
+
+<Section
+  id="home"
+  padded={false}
+  fullWidth
+  bg="gradient"
+  reveal={false}
+  class="relative flex min-h-screen items-center overflow-hidden"
+>
+  <!-- Background decoration -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+    <div
+      class="animate-pulse-slow absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-brand-500/10 blur-3xl"
+    >
+    </div>
+    <div
+      class="animate-pulse-slow absolute bottom-1/4 right-1/4 h-96 w-96 rounded-full bg-accent-500/10 blur-3xl"
+      style="animation-delay: 2s;"
+    >
+    </div>
+    <div
+      class="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-500/10"
+    >
+    </div>
+  </div>
+
+  <div class="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-28 lg:px-8 lg:py-32">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <!-- Left: Content -->
+      <div class="animate-fade-in-up text-center lg:text-left">
+        <div
+          class="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-200/50 bg-brand-100/50 px-4 py-2 text-fluid-xs font-medium text-brand-700 dark:border-brand-800/50 dark:bg-brand-900/30 dark:text-brand-300"
+        >
+          <span class="h-2 w-2 animate-pulse rounded-full bg-accent-500" aria-hidden="true"></span>
+          Disponible para nuevos proyectos
+        </div>
+
+        <Typography as="h1" size="display" weight="bold" color="heading" class="mb-6 leading-tight">
+          Full Stack Developer
+          <br />
+          <span class="text-brand-600 dark:text-brand-400">Software Engineer</span>
+        </Typography>
+
+        <Typography as="p" size="lg" color="muted" class="mx-auto mb-8 max-w-xl lg:mx-0">
+          {personalInfo.shortBio}
+        </Typography>
+
+        <!-- Tech highlights -->
+        <Flex
+          gap="md"
+          wrap
+          class="mb-8 justify-center lg:justify-start"
+          role="list"
+          aria-label="Tecnologías principales"
+        >
+          {
+            ['TypeScript', 'Angular', 'Node.js', 'MongoDB', 'GraphQL'].map((tech) => {
+              return (
+                <span
+                  class="rounded-full border border-slate-200/50 bg-white/70 px-3 py-1.5 text-fluid-sm font-medium text-slate-700 backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/70 dark:text-slate-300"
+                  role="listitem"
+                >
+                  {tech}
+                </span>
+              );
+            })
+          }
+        </Flex>
+
+        <!-- CTAs -->
+        <Flex gap="md" wrap class="justify-center lg:justify-start">
+          <>
+            <Button href="/projects/" variant="primary" size="lg" icon="rocket" iconPosition="left">
+              Ver Proyectos
+            </Button>
+            <Button
+              href="/contact/"
+              variant="outline"
+              size="lg"
+              icon="message-circle"
+              iconPosition="left"
+            >
+              Contactarme
+            </Button>
+            <Button
+              href="https://github.com/John-454"
+              variant="ghost"
+              size="lg"
+              external
+              icon="github"
+              iconPosition="left"
+            >
+              GitHub
+            </Button>
+            <Button
+              href="https://www.linkedin.com/in/john-deivid-chitan-cordoba-17a2b5336"
+              variant="ghost"
+              size="lg"
+              external
+              icon="linkedin"
+              iconPosition="left"
+            >
+              LinkedIn
+            </Button>
+          </>
+        </Flex>
+      </div>
+
+      <!-- Right: Visual/Stats -->
+      <div class="animate-fade-in-up relative" style="animation-delay: 200ms;">
+        <div class="grid grid-cols-2 gap-4 md:gap-6">
+          <StatCard value="3+" label="Proyectos en producción/desarrollo" icon="package" />
+          <StatCard value="4+" label="Años de experiencia Full Stack" icon="laptop" />
+          <StatCard value="10+" label="Tecnologías dominadas" icon="layers" />
+          <StatCard value="100%" label="TypeScript en toda la pila" icon="code" />
+        </div>
+
+        <!-- Code snippet decoration -->
+        <div class="mt-10 hidden lg:block">
+          <CodeSnippet />
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="animate-bounce-slow absolute bottom-8 left-1/2 -translate-x-1/2" aria-hidden="true">
+      <svg
+        class="h-6 w-6 text-slate-400 dark:text-slate-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
+  </div>
+</Section>
+
+<style>
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes pulse-slow {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+  @keyframes bounce-slow {
+    0%,
+    100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    50% {
+      transform: translateX(-50%) translateY(8px);
+    }
+  }
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+  }
+  .animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+  }
+  .animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+  }
+</style>

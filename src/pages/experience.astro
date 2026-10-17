@@ -1,0 +1,13 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Experience from '@/components/sections/Experience.astro';
+import { siteConfig } from '@/data/personal';
+---
+
+<BaseLayout
+  title="Experiencia"
+  description="Experiencia profesional como docente/instructor de tecnología y desarrollo de software autodidacta con proyectos reales en producción."
+  image={siteConfig.ogImage}
+>
+  <Experience />
+</BaseLayout>

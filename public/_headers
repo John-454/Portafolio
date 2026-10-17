@@ -1,0 +1,35 @@
+# Security Headers for Static Site
+# Cloudflare Pages / Netlify / Vercel compatible
+
+# Frame protection
+X-Frame-Options: DENY
+
+# MIME type sniffing protection
+X-Content-Type-Options: nosniff
+
+# Referrer policy
+Referrer-Policy: strict-origin-when-cross-origin
+
+# Permissions policy (feature policy)
+Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
+
+# DNS prefetch control
+X-DNS-Prefetch-Control: on
+
+# Cross-origin policies
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+
+# HSTS (enable only on production with valid TLS)
+# Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# Content Security Policy
+# Note: Adjust 'self' and allowed domains as needed
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.github.com https://avatars.githubusercontent.com https://formspree.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://formspree.io; object-src 'none';
+
+# Cache control for static assets
+# These are typically handled by the hosting provider
+
+# Expect-CT (Certificate Transparency)
+# Expect-CT: max-age=86400, enforce

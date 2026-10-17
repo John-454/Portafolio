@@ -1,0 +1,41 @@
+---
+import { cn } from '@/utils/helpers';
+import { ICONS, type IconName } from '@/utils/icons';
+
+interface Props {
+  name: IconName;
+  class?: string;
+  /** Tamaños fijos: misma relación icono/texto en todo el sitio. */
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  /** Atributos HTML adicionales (data-*). `aria-hidden` ya viene por defecto. */
+  [key: string]: any;
+}
+
+const { name, class: className = '', size = 'md', ...rest } = Astro.props;
+
+const sizes = {
+  xs: 'h-3.5 w-3.5',
+  sm: 'h-4 w-4',
+  md: 'h-5 w-5',
+  lg: 'h-6 w-6',
+  xl: 'h-8 w-8',
+  '2xl': 'h-14 w-14',
+};
+
+// Decorativo por defecto: el texto/aria-label del contexto describe la acción.
+// `ICONS` es una constante cerrada (paths de Lucide), sin datos de usuario.
+---
+
+<svg
+  class={cn('flex-shrink-0', sizes[size], className)}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+  {...rest}
+  set:html={ICONS[name]}
+/>

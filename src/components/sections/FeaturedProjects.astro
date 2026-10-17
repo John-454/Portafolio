@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Section from '@/components/ui/Section.astro';
+import SectionTitle from '@/components/ui/SectionTitle.astro';
+import Grid from '@/components/ui/Grid.astro';
+import ProjectCard from '@/components/project/ProjectCard.astro';
+import Button from '@/components/ui/Button.astro';
+import Flex from '@/components/ui/Flex.astro';
+
+const projects: CollectionEntry<'projects'>[] = (await getCollection('projects'))
+  .filter((p: CollectionEntry<'projects'>) => p.data.featured)
+  .sort(
+    (a: CollectionEntry<'projects'>, b: CollectionEntry<'projects'>) => a.data.order - b.data.order
+  );
+---
+
+<Section id="featured-projects" bg="surface">
+  <div class="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <SectionTitle level={2} icon="rocket" eyebrow="Destacados">
+      Proyectos Destacados
+      <p slot="description">
+        Una selección de mis proyectos más representativos. Cada uno resuelve un problema real con
+        arquitectura pensada para escalar.
+      </p>
+    </SectionTitle>
+    <Flex gap="md" class="md:ml-auto">
+      <Button href="/projects/" variant="outline" size="md" icon="arrow-right" iconPosition="right">
+        Ver todos los proyectos
+      </Button>
+    </Flex>
+  </div>
+
+  {
+    projects.length > 0 ? (
+      <Grid columns={3} gap="lg" class="mb-8">
+        {projects.map((project) => {
+          return <ProjectCard project={project} />;
+        })}
+      </Grid>
+    ) : (
+      <div class="py-16 text-center">
+        <p class="text-slate-600 dark:text-slate-400">No hay proyectos destacados configurados.</p>
+      </div>
+    )
+  }
+
+  <Flex gap="md" justify="center">
+    <Button href="/projects/" variant="primary" size="lg" icon="folder" iconPosition="left">
+      Explorar todos los proyectos
+    </Button>
+  </Flex>
+</Section>

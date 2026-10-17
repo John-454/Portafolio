@@ -1,0 +1,55 @@
+---
+import { cn } from '@/utils/helpers';
+interface Props {
+  children?: any;
+  class?: string;
+  hover?: boolean;
+  padded?: boolean;
+  bordered?: boolean;
+  glass?: boolean;
+  interactive?: boolean;
+  /** Atributos HTML adicionales (id, role, aria-*). */
+  [key: string]: any;
+}
+
+const {
+  class: className = '',
+  hover = false,
+  padded = true,
+  bordered = true,
+  glass = false,
+  interactive = false,
+  ...rest
+} = Astro.props;
+
+// Elevación sutil en reposo (shadow-sm) que sube a shadow-soft en hover.
+const base = 'transition-all duration-fast ease-smooth shadow-sm dark:shadow-none';
+const padding = padded ? 'p-6 md:p-8' : '';
+const border = bordered ? 'border border-slate-200 dark:border-slate-700' : '';
+const hoverStyles =
+  hover && !glass ? 'hover:shadow-soft hover:-translate-y-0.5 dark:hover:shadow-soft-dark' : '';
+const hoverGlass =
+  hover && glass ? 'hover:shadow-glass hover:-translate-y-0.5 dark:hover:shadow-glass-dark' : '';
+const interactiveStyles = interactive ? 'cursor-pointer select-none' : '';
+const glassStyles = glass
+  ? 'bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl backdrop-filter backdrop-saturate-150'
+  : 'bg-white dark:bg-slate-900';
+const radius = 'rounded-2xl';
+---
+
+<div
+  class={cn(
+    base,
+    padding,
+    border,
+    hoverStyles,
+    hoverGlass,
+    interactiveStyles,
+    glassStyles,
+    radius,
+    className
+  )}
+  {...rest}
+>
+  <slot />
+</div>

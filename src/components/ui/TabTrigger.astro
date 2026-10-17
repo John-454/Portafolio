@@ -1,0 +1,46 @@
+---
+import { cn } from '@/utils/helpers';
+interface Props {
+  children?: any;
+  class?: string;
+  selected?: boolean;
+  disabled?: boolean;
+  icon?: string;
+  /** Atributos HTML adicionales (id, aria-controls, ...). */
+  [key: string]: any;
+}
+
+const {
+  children,
+  class: className = '',
+  selected = false,
+  disabled = false,
+  icon,
+  ...rest
+} = Astro.props;
+---
+
+<button
+  role="tab"
+  aria-selected={selected}
+  aria-disabled={disabled}
+  class={cn(
+    'tab-trigger px-4 py-2 rounded-xl font-medium transition-all duration-fast',
+    'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+    selected
+      ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300 shadow-soft'
+      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800',
+    disabled && 'opacity-50 cursor-not-allowed',
+    className
+  )}
+  {...rest}
+>
+  {
+    icon && (
+      <span class="flex items-center gap-2" aria-hidden="true">
+        {icon}
+      </span>
+    )
+  }
+  <span><slot /></span>
+</button>

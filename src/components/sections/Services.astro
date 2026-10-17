@@ -1,0 +1,76 @@
+---
+import Section from '@/components/ui/Section.astro';
+import SectionTitle from '@/components/ui/SectionTitle.astro';
+import Grid from '@/components/ui/Grid.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import ServiceCard from './ServiceCard.astro';
+import { services, serviceCategories } from '@/data/services';
+import type { IconName } from '@/utils/icons';
+
+// Icono por categoría de servicio (mismo set Lucide que el resto del sitio).
+const categoryIcons: Record<string, IconName> = {
+  development: 'code',
+  data: 'database',
+  emerging: 'rocket',
+};
+---
+
+<Section id="services" bg="muted">
+  <div class="mb-12 md:mb-16">
+    <SectionTitle level={2} icon="wrench" eyebrow="Áreas de trabajo">
+      Servicios
+      <p slot="description">
+        Ayudo a empresas y equipos a construir software de calidad: seguro, escalable y mantenible.
+        Desde desarrollo full stack hasta automatización y seguridad aplicada.
+      </p>
+    </SectionTitle>
+  </div>
+
+  {
+    serviceCategories.map((category) => {
+      return (
+        <div class="mb-16" id={category.key}>
+          <Typography
+            as="h3"
+            size="xl"
+            weight="semibold"
+            color="heading"
+            class="mb-8 flex items-center gap-2"
+          >
+            <span
+              class="rounded-lg bg-brand-100 p-2 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400"
+              aria-hidden="true"
+            >
+              <Icon name={categoryIcons[category.key] || 'package'} />
+            </span>
+            {category.label}
+          </Typography>
+
+          <Grid columns={3} gap="lg">
+            {category.services.map((serviceId) => {
+              const service = services.find((s) => s.id === serviceId);
+              if (!service) return null;
+              return <ServiceCard service={service} />;
+            })}
+          </Grid>
+        </div>
+      );
+    })
+  }
+
+  <!-- CTA -->
+  <div class="border-t border-slate-200 pt-8 text-center dark:border-slate-700">
+    <Typography as="h3" size="xl" weight="semibold" color="heading" class="mb-4"
+      >¿No ves lo que necesitas?</Typography
+    >
+    <Typography as="p" size="base" color="muted" class="mx-auto mb-6 max-w-xl">
+      Cada proyecto es único. Si tienes un reto específico, hablemos y diseñamos la solución a
+      medida.
+    </Typography>
+    <Button href="/contact/" variant="primary" size="lg" icon="message-circle" iconPosition="left">
+      Conversar sobre tu proyecto
+    </Button>
+  </div>
+</Section>

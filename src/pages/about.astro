@@ -1,0 +1,17 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import About from '@/components/sections/About.astro';
+import Technologies from '@/components/sections/Technologies.astro';
+import Experience from '@/components/sections/Experience.astro';
+import { siteConfig } from '@/data/personal';
+---
+
+<BaseLayout
+  title="Sobre mí"
+  description="Full Stack Developer especializado en TypeScript, Angular, Node.js, MongoDB y GraphQL. Experiencia en arquitectura limpia, testing, CI/CD y seguridad aplicada. Evolucionando hacia AppSec y DevSecOps."
+  image={siteConfig.ogImage}
+>
+  <About />
+  <Technologies />
+  <Experience />
+</BaseLayout>

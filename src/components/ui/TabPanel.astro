@@ -1,0 +1,21 @@
+---
+import { cn } from '@/utils/helpers';
+interface Props {
+  class?: string;
+  selected?: boolean;
+  /** Atributos HTML adicionales (id, aria-labelledby, ...). */
+  [key: string]: any;
+}
+
+const { class: className = '', selected = false, ...rest } = Astro.props;
+---
+
+<div
+  role="tabpanel"
+  aria-hidden={!selected}
+  hidden={!selected}
+  class={cn('tab-panel', className)}
+  {...rest}
+>
+  <slot />
+</div>

@@ -1,0 +1,190 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionTitle from '@/components/ui/SectionTitle.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Card from '@/components/ui/Card.astro';
+import Stack from '@/components/ui/Stack.astro';
+import { personalInfo, siteConfig } from '@/data/personal';
+
+const lastUpdated = '22 de septiembre de 2026';
+
+const sections = [
+  {
+    title: '1. Quién es responsable de tus datos',
+    body: [
+      `El responsable del tratamiento de los datos personales recogidos a través de este sitio web es ${personalInfo.name}, contactable en ${personalInfo.email}.`,
+      'Este sitio es un portafolio personal estático: no tiene panel de administración, base de datos propia ni cuentas de usuario.',
+    ],
+  },
+  {
+    title: '2. Qué datos recopilamos',
+    body: [
+      'Solo recopilamos los datos que decides enviarnos voluntariamente mediante el formulario de contacto: nombre, correo electrónico, asunto y mensaje.',
+      'No recopilamos datos de forma encubierta, no pedimos categorías especiales de datos y no creamos perfiles de usuario.',
+    ],
+    items: [
+      'Formulario de contacto: nombre, email y contenido del mensaje.',
+      'Almacenamiento local del navegador: únicamente la preferencia de tema (claro/oscuro), guardada en localStorage. No es una cookie ni identifica a nadie.',
+      'Logs técnicos del proveedor de alojamiento: dirección IP, agente de usuario y recursos solicitados, con finalidad de seguridad y estadísticas agregadas de tráfico.',
+    ],
+  },
+  {
+    title: '3. Para qué usamos los datos',
+    body: [
+      'Usamos tus datos exclusivamente para responder a tu consulta, preparar una propuesta si la hay, y mantener la seguridad y el funcionamiento del sitio.',
+      'No vendemos, cedemos, alquilamos ni difundimos tus datos a terceros con fines comerciales.',
+    ],
+  },
+  {
+    title: '4. Base legal del tratamiento',
+    body: [
+      'El tratamiento se basa en tu consentimiento, que otorgas al enviar el formulario de contacto, y en el interés legítimo de atender comunicaciones profesionales.',
+      'Puedes retirar ese consentimiento en cualquier momento escribiendo al correo indicado en la sección de contacto.',
+    ],
+  },
+  {
+    title: '5. Servicios de terceros',
+    body: [
+      'Algunos recursos se sirven desde proveedores externos. Estos terceros tratan datos bajo sus propias políticas de privacidad.',
+    ],
+    items: [
+      'Formspree (formspree.io): procesa y entrega los envíos del formulario de contacto. Sus datos de contacto y política están en su sitio web.',
+      'Google Fonts (fonts.googleapis.com / fonts.gstatic.com): sirve las tipografías del sitio; tu IP se transmite a Google al solicitar los archivos.',
+      'Alojamiento estático (por ejemplo Cloudflare Pages): registra los logs técnicos necesarios para operar y proteger el sitio.',
+    ],
+  },
+  {
+    title: '6. Cookies y almacenamiento local',
+    body: [
+      'Este sitio NO utiliza cookies de análisis, publicidad ni seguimiento, y no instala cookies propias.',
+      'La única persistencia en tu navegador es la clave "theme" en localStorage, que guarda tu preferencia de apariencia y puede eliminarse en cualquier momento desde la configuración del navegador.',
+    ],
+  },
+  {
+    title: '7. Cuánto tiempo conservamos los datos',
+    body: [
+      'Los datos del formulario se conservan solo el tiempo necesario para atender tu solicitud y, posteriormente, mientras exista obligación legal de conservarlos.',
+      'Si no deseas que tu mensaje permanezca registrado, puedes solicitar su eliminación por correo.',
+    ],
+  },
+  {
+    title: '8. Tus derechos',
+    body: [
+      'Puedes ejercer en cualquier momento los derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad de tus datos, así como retirar el consentimiento otorgado.',
+      'Para ejercerlos basta con escribir a ' +
+        personalInfo.email +
+        ' indicando el derecho que deseas ejercer. Responderemos en un plazo máximo de 15 días hábiles.',
+    ],
+  },
+  {
+    title: '9. Seguridad',
+    body: [
+      'Aplicamos headers de seguridad (Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy) y el sitio se sirve exclusivamente por HTTPS.',
+      'Al no existir base de datos propia ni autenticación, la superficie de ataque se reduce al formulario de contacto, que se envía cifrado a un tercero especializado.',
+    ],
+  },
+  {
+    title: '10. Menores de edad',
+    body: [
+      'Este sitio no está dirigido a menores de 14 años y no tenemos conocimiento de que recopile datos de menores. Si detectas que un menor nos ha facilitado datos, escríbenos para eliminarlos.',
+    ],
+  },
+  {
+    title: '11. Cambios en esta política',
+    body: [
+      'Podemos actualizar esta política para reflejar cambios legales o técnicos. La fecha de la última modificación siempre aparece al inicio de esta página.',
+      'Te recomendamos revisarla periódicamente. El uso continuado del sitio tras un cambio implica la aceptación de la versión vigente.',
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Política de Privacidad"
+  description="Política de privacidad del portafolio de John Chitan. Qué datos recopilamos, para qué los usamos, servicios de terceros y cómo ejercer tus derechos."
+  image={siteConfig.ogImage}
+>
+  <Section id="privacy" bg="surface" class="pt-24">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div class="mb-10">
+        <SectionTitle level={1} icon="shield" eyebrow="Legal">
+          Política de Privacidad
+          <p slot="description">
+            Transparencia total: este sitio es estático, no usa cookies de seguimiento y solo
+            recopila los datos que nos envías por tu cuenta.
+          </p>
+        </SectionTitle>
+        <Typography as="p" size="sm" color="muted" class="mt-4">
+          Última actualización: {lastUpdated}
+        </Typography>
+      </div>
+
+      <Stack space="lg">
+        {
+          sections.map((section) => {
+            return (
+              <Card padded>
+                <Typography as="h2" size="base" weight="bold" color="heading" class="mb-3">
+                  {section.title}
+                </Typography>
+                <Stack space="sm">
+                  {section.body.map((paragraph) => {
+                    return (
+                      <Typography as="p" color="muted">
+                        {paragraph}
+                      </Typography>
+                    );
+                  })}
+                </Stack>
+                {section.items && (
+                  <ul class="mt-4 space-y-2" role="list">
+                    {section.items.map((item) => {
+                      return (
+                        <li class="flex items-start gap-2 text-fluid-sm text-slate-600 dark:text-slate-300">
+                          <svg
+                            class="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-500"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          <span>{item}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </Card>
+            );
+          })
+        }
+      </Stack>
+
+      <Card
+        padded
+        class="mt-10 border-brand-200 bg-brand-50 dark:border-brand-800 dark:bg-brand-950/40"
+      >
+        <Typography as="h2" size="base" weight="bold" color="heading" class="mb-2">
+          Contacto sobre privacidad
+        </Typography>
+        <Typography as="p" color="muted">
+          Si tienes dudas o quieres ejercer alguno de tus derechos, escribe a{' '}
+          <a
+            href={`mailto:${personalInfo.email}`}
+            class="font-medium text-brand-600 hover:underline dark:text-brand-400"
+          >
+            {personalInfo.email}
+          </a>.
+        </Typography>
+      </Card>
+    </div>
+  </Section>
+</BaseLayout>

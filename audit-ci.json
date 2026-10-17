@@ -1,0 +1,9 @@
+{
+  "ignore": ["eslint", "prettier", "typescript", "vitest", "@types/node", "astro", "tailwindcss"],
+  "registry": "https://registry.npmjs.org/",
+  "ci": {
+    "moderate": false,
+    "high": true,
+    "critical": true
+  }
+}

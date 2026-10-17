@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-brand-50: #f0f5ff;
+    --color-brand-100: #e0ebff;
+    --color-brand-200: #c7d9fe;
+    --color-brand-300: #a5c0fc;
+    --color-brand-400: #7aa0f8;
+    --color-brand-500: #5580f0;
+    --color-brand-600: #3d5ee6;
+    --color-brand-700: #2e47c4;
+    --color-brand-800: #283b9e;
+    --color-brand-900: #24327d;
+    --color-brand-950: #191f4a;
+
+    --color-accent-50: #ecfdf5;
+    --color-accent-100: #d1fae5;
+    --color-accent-200: #a7f3d0;
+    --color-accent-300: #6ee7b7;
+    --color-accent-400: #34d399;
+    --color-accent-500: #10b981;
+    --color-accent-600: #059669;
+    --color-accent-700: #047857;
+    --color-accent-800: #065f46;
+    --color-accent-900: #064e3b;
+    --color-accent-950: #022c22;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply bg-white font-sans text-slate-900 dark:bg-surface-dark dark:text-slate-100;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900 dark:bg-brand-800 dark:text-brand-100;
+  }
+
+  ::marker {
+    @apply text-brand-500 dark:text-brand-400;
+  }
+
+  focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-900;
+  }
+}
+
+@layer components {
+  .prose {
+    @apply leading-relaxed text-slate-700 dark:text-slate-300;
+  }
+
+  .prose p {
+    @apply mb-4 text-fluid-base;
+  }
+
+  .prose h2 {
+    @apply mb-4 mt-10 border-b border-slate-200 pb-2 font-heading text-fluid-2xl font-bold text-slate-900 dark:border-slate-700 dark:text-white;
+  }
+
+  .prose h3 {
+    @apply mb-3 mt-8 font-heading text-fluid-xl font-semibold text-slate-900 dark:text-white;
+  }
+
+  .prose h4 {
+    @apply mb-2 mt-6 font-heading text-fluid-lg font-medium text-slate-900 dark:text-white;
+  }
+
+  .prose ul {
+    @apply mb-4 list-inside list-disc space-y-2;
+  }
+
+  .prose ol {
+    @apply mb-4 list-inside list-decimal space-y-2;
+  }
+
+  .prose li {
+    @apply text-fluid-base;
+  }
+
+  .prose strong {
+    @apply font-semibold text-slate-900 dark:text-white;
+  }
+
+  .prose code {
+    @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-fluid-sm text-brand-700 dark:bg-slate-800 dark:text-brand-300;
+  }
+
+  .prose pre {
+    @apply mb-4 overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4 dark:bg-slate-950;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0 text-slate-100 dark:text-slate-100;
+  }
+
+  .prose a {
+    @apply text-brand-600 underline underline-offset-2 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300;
+  }
+
+  .prose blockquote {
+    @apply my-4 border-l-4 border-brand-500 pl-4 italic text-slate-600 dark:text-slate-400;
+  }
+
+  .prose img {
+    @apply my-6 rounded-xl border border-slate-200 dark:border-slate-700;
+  }
+
+  .prose table {
+    @apply mb-4 w-full border-collapse;
+  }
+
+  .prose th,
+  .prose td {
+    @apply border border-slate-200 px-4 py-2 text-left dark:border-slate-700;
+  }
+
+  .prose th {
+    @apply bg-slate-100 font-semibold dark:bg-slate-800;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Revelado por scroll (una entrada por sección). El estado oculto inicial
+     sólo se aplica con la clase `js-reveal`, que BaseLayout añade al <html>
+     si hay JavaScript y el usuario NO pide movimiento reducido: sin esa
+     clase (sin JS o con reduced-motion) el contenido queda visible tal cual. */
+  .js-reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(1.5rem);
+    transition:
+      opacity 0.7s ease-out,
+      transform 0.7s ease-out;
+  }
+
+  .js-reveal [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl backdrop-saturate-150 dark:bg-slate-900/70;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 bg-clip-text text-transparent;
+  }
+}
+
+/* Print styles */
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  /* El revelado por scroll deja invisible lo que nunca entró en el viewport:
+     al imprimir (o guardar como PDF) todo el contenido debe salir visible. */
+  .js-reveal [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  main {
+    @apply pt-0;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+
+  .prose a::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.8em;
+    color: #666;
+  }
+}

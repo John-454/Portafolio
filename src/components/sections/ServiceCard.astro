@@ -1,0 +1,132 @@
+---
+import Card from '@/components/ui/Card.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Flex from '@/components/ui/Flex.astro';
+import Badge from '@/components/ui/Badge.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import type { IconName } from '@/utils/icons';
+
+interface Props {
+  service: {
+    id: string;
+    title: string;
+    description: string;
+    shortDescription: string;
+    icon: IconName;
+    stack: string[];
+    features: string[];
+    process: string[];
+    cta: string;
+  };
+}
+const { service } = Astro.props;
+---
+
+<article class="relative" role="listitem">
+  <Card
+    padded
+    class="group flex h-full flex-col transition-all duration-normal hover:border-brand-300/50 hover:shadow-soft dark:hover:border-brand-700/50 dark:hover:shadow-soft-dark"
+  >
+    <div class="mb-5 flex items-start gap-4">
+      <div
+        class="flex-shrink-0 rounded-xl bg-brand-100 p-3 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400"
+      >
+        <Icon name={service.icon} size="lg" />
+      </div>
+      <div class="flex-1">
+        <Typography as="h4" size="lg" weight="semibold" color="heading">{service.title}</Typography>
+        <Typography as="p" size="sm" color="muted" class="mt-1"
+          >{service.shortDescription}</Typography
+        >
+      </div>
+    </div>
+
+    <Typography as="p" size="sm" color="muted" class="mb-5 flex-1">{service.description}</Typography
+    >
+
+    <!-- Stack -->
+    <div class="mb-5">
+      <Typography
+        as="h5"
+        size="xs"
+        weight="semibold"
+        color="heading"
+        class="mb-2 uppercase tracking-wider text-slate-500 dark:text-slate-400"
+        >Stack principal</Typography
+      >
+      <Flex gap="sm" wrap role="list" aria-label="Tecnologías">
+        {service.stack.map((tech) => <Badge variant="tech" label={tech} size="sm" />)}
+      </Flex>
+    </div>
+
+    <!-- Features -->
+    <div class="mb-5">
+      <Typography
+        as="h5"
+        size="xs"
+        weight="semibold"
+        color="heading"
+        class="mb-2 uppercase tracking-wider text-slate-500 dark:text-slate-400"
+        >Qué incluye</Typography
+      >
+      <ul class="space-y-2" role="list">
+        {
+          service.features.map((feature) => (
+            <li class="flex items-start gap-2 text-fluid-sm text-slate-600 dark:text-slate-300">
+              <svg
+                class="mt-0.5 h-4 w-4 flex-shrink-0 text-accent-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              {feature}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Process -->
+    <details class="group mb-5">
+      <summary
+        class="flex cursor-pointer list-none items-center gap-2 text-fluid-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"
+          ></path></svg
+        >
+        Ver proceso de trabajo
+      </summary>
+      <ol class="mt-3 space-y-2 pl-6" role="list">
+        {
+          service.process.map((step, i) => (
+            <li class="flex items-start gap-2 text-fluid-sm text-slate-600 dark:text-slate-300">
+              <span class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 font-mono text-fluid-xs text-brand-600 dark:bg-brand-900/30 dark:text-brand-400">
+                {i + 1}
+              </span>
+              {step}
+            </li>
+          ))
+        }
+      </ol>
+    </details>
+
+    <Button variant="outline" fullWidth class="mt-auto" icon="arrow-right" iconPosition="right">
+      {service.cta}
+    </Button>
+  </Card>
+</article>

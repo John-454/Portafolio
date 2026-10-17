@@ -1,0 +1,65 @@
+---
+import { cn } from '@/utils/helpers';
+interface Props {
+  children?: any;
+  label: string;
+  variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'tech';
+  size?: 'sm' | 'md';
+  dot?: boolean;
+  class?: string;
+  /** Atributos HTML adicionales (title, role, aria-*, data-*). */
+  [key: string]: any;
+}
+
+const {
+  children,
+  label,
+  variant = 'default',
+  size = 'md',
+  dot = false,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const variants = {
+  default: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+  success: 'bg-accent-100 text-accent-800 dark:bg-accent-900/30 dark:text-accent-400',
+  warning: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
+  error: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+  info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+  tech: 'bg-brand-100 text-brand-800 dark:bg-brand-900/30 dark:text-brand-400',
+};
+
+const sizes = {
+  sm: 'px-2 py-0.5 text-fluid-xs gap-1',
+  md: 'px-2.5 py-1 text-fluid-sm gap-1.5',
+};
+
+const dotColors = {
+  default: 'bg-slate-400',
+  success: 'bg-accent-500',
+  warning: 'bg-amber-500',
+  error: 'bg-red-500',
+  info: 'bg-blue-500',
+  tech: 'bg-brand-500',
+};
+---
+
+<style>
+  .badge {
+    @apply inline-flex items-center rounded-full font-medium transition-colors;
+  }
+</style>
+
+<span class={cn('badge', variants[variant], sizes[size], className)} {...rest}>
+  {
+    dot && (
+      <span
+        class={cn('h-1.5 w-1.5 flex-shrink-0 rounded-full', dotColors[variant])}
+        aria-hidden="true"
+      />
+    )
+  }
+  <span>{label}</span>
+  <slot />
+</span>

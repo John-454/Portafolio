@@ -1,0 +1,155 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  url?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  authors?: string[];
+  tags?: string[];
+  noIndex?: boolean;
+  noFollow?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  url,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  authors,
+  tags,
+  noIndex = false,
+  noFollow = false,
+} = Astro.props;
+
+const siteUrl = 'https://johnchitan.dev';
+const siteName = 'John Chitan - Portfolio';
+const defaultImage = '/images/og-portfolio.png';
+const twitterHandle = '@johnchitan';
+
+// Astro.url apunta a la página actual en build (p. ej. /about/), de modo que
+// el canonical y og:url son correctos por página y no todos apuntan a la raíz.
+const currentPath = Astro.url.pathname;
+const pageUrl = url || new URL(currentPath, siteUrl).toString();
+
+// `trailingSlash: 'always'` exige la barra final: sin ella el servidor redirige
+// y el canonical quedaría apuntando a una URL que no es la canónica.
+const normalizeCanonical = (value: string): string => {
+  const parsed = new URL(value, siteUrl);
+  const isFile = /\.[a-z0-9]+$/i.test(parsed.pathname);
+  if (!parsed.pathname.endsWith('/') && !isFile) parsed.pathname += '/';
+  return parsed.toString();
+};
+
+const canonicalUrl = normalizeCanonical(pageUrl);
+
+const pageTitle = title ? `${title} | ${siteName}` : siteName;
+const pageDescription =
+  description ||
+  'Full Stack Developer | Software Engineer | Building Secure & Scalable Web Applications';
+const pageImage = new URL(image || defaultImage, siteUrl).toString();
+const pageImageAlt = title || 'John Chitan Portfolio';
+
+// Se construye como string de meta tags reales; se inyecta con set:html
+// (renderizarlo como texto escaparía las etiquetas y rompería OG/Twitter).
+const ogLines: Array<[string, string]> = [
+  ['og:title', pageTitle],
+  ['og:description', pageDescription],
+  ['og:url', canonicalUrl],
+  ['og:site_name', siteName],
+  ['og:type', type],
+  ['og:locale', 'es_CO'],
+  ['og:image', pageImage],
+  ['og:image:alt', pageImageAlt],
+];
+
+if (type === 'article') {
+  if (publishedTime) ogLines.push(['article:published_time', publishedTime]);
+  if (modifiedTime) ogLines.push(['article:modified_time', modifiedTime]);
+  authors?.forEach((a) => ogLines.push(['article:author', a]));
+  tags?.forEach((t) => ogLines.push(['article:tag', t]));
+}
+
+const twitterLines: Array<[string, string]> = [
+  ['twitter:card', 'summary_large_image'],
+  ['twitter:title', pageTitle],
+  ['twitter:description', pageDescription],
+  ['twitter:image', pageImage],
+  ['twitter:image:alt', pageImageAlt],
+  ['twitter:site', twitterHandle],
+  ['twitter:creator', twitterHandle],
+];
+
+const attr = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+
+const ogTags = ogLines
+  .map(([property, content]) => `<meta property="${property}" content="${attr(content)}" />`)
+  .join('\n    ');
+const twitterTags = twitterLines
+  .map(([name, content]) => `<meta name="${name}" content="${attr(content)}" />`)
+  .join('\n    ');
+
+const robotsContent = `${noIndex ? 'noindex' : 'index'}, ${noFollow ? 'nofollow' : 'follow'}`;
+---
+
+<!-- Primary Meta Tags -->
+<title>{pageTitle}</title>
+<meta name="title" content={pageTitle} />
+<meta name="description" content={pageDescription} />
+<meta
+  name="keywords"
+  content="Full Stack Developer, Software Engineer, TypeScript, Angular, Node.js, MongoDB, GraphQL, Application Security, DevSecOps, Portfolio"
+/>
+<meta name="author" content="John Chitan" />
+<meta name="robots" content={robotsContent} />
+<link rel="canonical" href={canonicalUrl} />
+
+<!-- Open Graph / Facebook -->
+<Fragment set:html={'\n    ' + ogTags + '\n    '} />
+
+<!-- Twitter -->
+<Fragment set:html={'\n    ' + twitterTags + '\n    '} />
+
+<!-- Additional SEO -->
+<meta property="og:locale:alternate" content="en_US" />
+<link rel="alternate" hreflang="es" href={canonicalUrl} />
+<link rel="alternate" hreflang="en" href={canonicalUrl} />
+<link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+
+<!-- JSON-LD Structured Data -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': type === 'article' ? 'BlogPosting' : 'WebSite',
+    name: siteName,
+    url: siteUrl,
+    headline: title,
+    description: pageDescription,
+    image: pageImage,
+    author: {
+      '@type': 'Person',
+      name: 'John Chitan',
+      url: siteUrl,
+      sameAs: [
+        'https://github.com/John-454',
+        'https://www.linkedin.com/in/john-deivid-chitan-cordoba-17a2b5336',
+      ],
+      jobTitle: 'Full Stack Developer',
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'John Chitan',
+    },
+    ...(type === 'article' && {
+      datePublished: publishedTime,
+      dateModified: modifiedTime || publishedTime,
+      keywords: tags?.join(', '),
+    }),
+  })}
+/>

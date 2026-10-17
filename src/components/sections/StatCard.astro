@@ -1,0 +1,26 @@
+---
+import { cn } from '@/utils/helpers';
+import Icon from '@/components/ui/Icon.astro';
+import type { IconName } from '@/utils/icons';
+interface Props {
+  value: string;
+  label: string;
+  icon: IconName;
+  class?: string;
+}
+
+const { value, label, icon, class: className = '' } = Astro.props;
+---
+
+<div
+  class={cn(
+    'relative p-5 md:p-6 rounded-2xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl backdrop-saturate-150 border border-slate-200/50 dark:border-slate-700/50 shadow-sm dark:shadow-none hover:border-brand-300/50 dark:hover:border-brand-700/50 transition-all duration-normal',
+    className
+  )}
+>
+  <Icon name={icon} size="xl" class="mb-2 text-brand-600 dark:text-brand-400" />
+  <div class="font-heading text-2xl font-bold text-slate-900 dark:text-white md:text-3xl">
+    {value}
+  </div>
+  <div class="mt-1 text-fluid-sm text-slate-600 dark:text-slate-400">{label}</div>
+</div>

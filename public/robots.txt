@@ -1,0 +1,18 @@
+# robots.txt for John Chitan Portfolio
+# https://johnchitan.dev/robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://johnchitan.dev/sitemap-index.xml
+
+# Disallow admin/private paths (none in static site)
+# Disallow: /api/
+# Disallow: /admin/
+
+# Crawl delay (optional, be respectful)
+# Crawl-delay: 10
+
+# Host directive (deprecated but still used by some)
+Host: https://johnchitan.dev

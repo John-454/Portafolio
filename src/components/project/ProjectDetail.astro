@@ -1,0 +1,427 @@
+---
+import Section from '@/components/ui/Section.astro';
+import Stack from '@/components/ui/Stack.astro';
+import Flex from '@/components/ui/Flex.astro';
+import Grid from '@/components/ui/Grid.astro';
+import Card from '@/components/ui/Card.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Badge from '@/components/ui/Badge.astro';
+import Button from '@/components/ui/Button.astro';
+import Image from '@/components/ui/Image.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { formatDateRange } from '@/utils/helpers';
+import type { CollectionEntry } from 'astro:content';
+import type { ProjectData } from '@/content/config';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+// `project.data` puede ser `any` (inferencia de Astro): se anota con el tipo
+// del schema para tipar de verdad `features`, `technicalChallenges`, etc.
+const data: ProjectData = project.data;
+// `noUncheckedIndexedAccess` hace que `images[0]` sea `string | undefined`;
+// se afina aquí para que el `<Image>` reciba `src: string`.
+const heroImage = data.images?.[0];
+
+const statusConfig = {
+  'En producción': { variant: 'success' as const },
+  'En desarrollo': { variant: 'info' as const },
+  Completado: { variant: 'default' as const },
+  Archivado: { variant: 'warning' as const },
+};
+const status = statusConfig[data.status] || statusConfig['En desarrollo'];
+---
+
+<Section id="project-detail" padded={false} bg="surface" class="pt-24">
+  <!-- El contenedor (max-w-7xl + padding) lo aporta <Section>. -->
+  <article>
+    <!-- Header -->
+    <header class="mb-10 md:mb-14">
+      <Flex gap="md" wrap class="mb-4" role="list" aria-label="Metadatos del proyecto">
+        <Badge variant={status.variant} label={data.status} dot size="md" />
+        <span
+          class="rounded-full border border-slate-200 bg-slate-100 px-3 py-1.5 text-fluid-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+        >
+          {data.role}
+        </span>
+        <span
+          class="rounded-full border border-slate-200 bg-slate-100 px-3 py-1.5 text-fluid-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+        >
+          {formatDateRange(data.startDate, data.endDate)}
+        </span>
+      </Flex>
+
+      <Typography as="h1" size="display" weight="bold" color="heading" class="mb-4">
+        {data.name}
+      </Typography>
+
+      <Typography as="p" size="xl" color="muted" class="max-w-3xl">
+        {data.description}
+      </Typography>
+
+      <!-- Resultado medible (opcional, definido en el frontmatter del proyecto) -->
+      {
+        data.result && (
+          <div class="mt-6 max-w-3xl rounded-2xl border border-accent-200/60 bg-accent-50 p-4 dark:border-accent-800/60 dark:bg-accent-900/20">
+            <div class="flex items-center gap-2">
+              <Icon name="trending-up" size="sm" class="text-accent-600 dark:text-accent-400" />
+              <p class="text-fluid-xs font-semibold uppercase tracking-wider text-accent-700 dark:text-accent-300">
+                Resultado
+              </p>
+            </div>
+            <p class="mt-1 text-fluid-base text-slate-800 dark:text-slate-200">{data.result}</p>
+          </div>
+        )
+      }
+    </header>
+
+    <!-- Hero Image -->
+    {
+      heroImage && (
+        <div class="mb-10 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 md:mb-14">
+          <Image
+            src={heroImage}
+            alt={`Vista principal de ${data.name}`}
+            width={1200}
+            height={600}
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+          />
+        </div>
+      )
+    }
+
+    <div class="grid gap-8 lg:grid-cols-3 lg:gap-12">
+      <!-- Main Content -->
+      <div class="space-y-10 lg:col-span-2">
+        <!-- Problem/Solution -->
+        <section aria-labelledby="problem-title">
+          <div class="mb-6 grid gap-6 md:grid-cols-2">
+            <Card class="h-full" padded>
+              <Flex gap="md" class="mb-4" align="center">
+                <div class="rounded-xl bg-red-100 p-3 dark:bg-red-900/30" aria-hidden="true">
+                  <svg
+                    class="h-6 w-6 text-red-600 dark:text-red-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    ></path></svg
+                  >
+                </div>
+                <Typography as="h3" id="problem-title" size="lg" weight="semibold" color="heading"
+                  >Problema</Typography
+                >
+              </Flex>
+              <Typography
+                as="p"
+                color="muted"
+                class="prose prose-slate dark:prose-invert max-w-none"
+              >
+                {data.problem}
+              </Typography>
+            </Card>
+
+            <Card class="h-full" padded>
+              <Flex gap="md" class="mb-4" align="center">
+                <div class="rounded-xl bg-accent-100 p-3 dark:bg-accent-900/30" aria-hidden="true">
+                  <svg
+                    class="h-6 w-6 text-accent-600 dark:text-accent-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg
+                  >
+                </div>
+                <Typography as="h3" size="lg" weight="semibold" color="heading">Solución</Typography
+                >
+              </Flex>
+              <Typography
+                as="p"
+                color="muted"
+                class="prose prose-slate dark:prose-invert max-w-none"
+              >
+                {data.solution}
+              </Typography>
+            </Card>
+          </div>
+        </section>
+
+        <!-- Architecture -->
+        <section aria-labelledby="arch-title">
+          <Typography
+            as="h3"
+            id="arch-title"
+            size="lg"
+            weight="semibold"
+            color="heading"
+            class="mb-4 flex items-center gap-2"
+          >
+            <span class="rounded-lg bg-brand-100 p-2 dark:bg-brand-900/30" aria-hidden="true">
+              <svg
+                class="h-5 w-5 text-brand-600 dark:text-brand-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                ></path></svg
+              >
+            </span>
+            Arquitectura
+          </Typography>
+          <Card padded class="bg-slate-50 dark:bg-slate-800/50">
+            <Typography as="p" color="muted" class="whitespace-pre-wrap font-mono text-fluid-sm"
+              >{data.architecture}</Typography
+            >
+          </Card>
+        </section>
+
+        <!-- Features -->
+        <section aria-labelledby="features-title">
+          <Typography
+            as="h3"
+            id="features-title"
+            size="lg"
+            weight="semibold"
+            color="heading"
+            class="mb-4 flex items-center gap-2"
+          >
+            <span class="rounded-lg bg-accent-100 p-2 dark:bg-accent-900/30" aria-hidden="true">
+              <svg
+                class="h-5 w-5 text-accent-600 dark:text-accent-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                ></path></svg
+              >
+            </span>
+            Funcionalidades Principales
+          </Typography>
+          <Grid columns={2} gap="md">
+            {
+              data.features.map((feature) => (
+                <Flex
+                  gap="sm"
+                  align="start"
+                  class="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50"
+                >
+                  <svg
+                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-accent-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <Typography as="p" size="sm" color="muted">
+                    {feature}
+                  </Typography>
+                </Flex>
+              ))
+            }
+          </Grid>
+        </section>
+
+        <!-- Technical Challenges -->
+        <section aria-labelledby="challenges-title">
+          <Typography
+            as="h3"
+            id="challenges-title"
+            size="lg"
+            weight="semibold"
+            color="heading"
+            class="mb-4 flex items-center gap-2"
+          >
+            <span class="rounded-lg bg-amber-100 p-2 dark:bg-amber-900/30" aria-hidden="true">
+              <svg
+                class="h-5 w-5 text-amber-600 dark:text-amber-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg
+              >
+            </span>
+            Retos Técnicos
+          </Typography>
+          <Stack space="sm">
+            {
+              data.technicalChallenges.map((challenge, i) => (
+                <Flex
+                  gap="sm"
+                  align="start"
+                  class="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50"
+                >
+                  <span class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 font-mono text-fluid-xs text-brand-600 dark:bg-brand-900/30 dark:text-brand-400">
+                    {i + 1}
+                  </span>
+                  <Typography as="p" size="sm" color="muted" class="flex-1">
+                    {challenge}
+                  </Typography>
+                </Flex>
+              ))
+            }
+          </Stack>
+        </section>
+
+        <!-- Full Content (MDX body) -->
+        {
+          project.body && (
+            <section
+              class="prose prose-slate dark:prose-invert max-w-none"
+              set:html={project.body}
+            />
+          )
+        }
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="space-y-6">
+        <!-- Tech Stack -->
+        <Card padded>
+          <Typography
+            as="h4"
+            size="base"
+            weight="semibold"
+            color="heading"
+            class="mb-4 flex items-center gap-2"
+          >
+            <span class="rounded-lg bg-brand-100 p-2 dark:bg-brand-900/30" aria-hidden="true">
+              <svg
+                class="h-5 w-5 text-brand-600 dark:text-brand-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg
+              >
+            </span>
+            Stack Tecnológico
+          </Typography>
+          <Flex gap="sm" wrap role="list" aria-label="Tecnologías del proyecto">
+            {data.technologies.map((tech) => <Badge variant="tech" label={tech} size="md" />)}
+          </Flex>
+        </Card>
+
+        <!-- Links -->
+        <Card padded>
+          <Typography
+            as="h4"
+            size="base"
+            weight="semibold"
+            color="heading"
+            class="mb-4 flex items-center gap-2"
+          >
+            <span class="rounded-lg bg-slate-100 p-2 dark:bg-slate-800" aria-hidden="true">
+              <svg
+                class="h-5 w-5 text-slate-600 dark:text-slate-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                ></path></svg
+              >
+            </span>
+            Enlaces
+          </Typography>
+          <Stack space="sm">
+            {
+              data.github && (
+                <Button
+                  href={data.github}
+                  variant="outline"
+                  fullWidth
+                  icon="github"
+                  iconPosition="left"
+                  external
+                >
+                  Repositorio
+                </Button>
+              )
+            }
+            {
+              data.demo && (
+                <Button
+                  href={data.demo}
+                  variant="primary"
+                  fullWidth
+                  icon="globe"
+                  iconPosition="left"
+                  external
+                >
+                  Demo en vivo
+                </Button>
+              )
+            }
+            <Button
+              href="/projects/"
+              variant="ghost"
+              fullWidth
+              icon="arrow-left"
+              iconPosition="left"
+            >
+              Volver a proyectos
+            </Button>
+          </Stack>
+        </Card>
+
+        <!-- Additional Images -->
+        {
+          data.images && data.images.length > 1 && (
+            <Card padded>
+              <Typography as="h4" size="base" weight="semibold" color="heading" class="mb-4">
+                Capturas
+              </Typography>
+              <Grid columns={1} gap="sm">
+                {data.images.slice(1).map((img, i) => (
+                  <Image
+                    src={img}
+                    alt={`Captura ${i + 2} de ${data.name}`}
+                    width={400}
+                    height={250}
+                    class="rounded-xl border border-slate-200 transition-shadow hover:shadow-soft dark:border-slate-700 dark:hover:shadow-soft-dark"
+                  />
+                ))}
+              </Grid>
+            </Card>
+          )
+        }
+      </aside>
+    </div>
+  </article>
+</Section>

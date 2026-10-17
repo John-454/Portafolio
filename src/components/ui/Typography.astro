@@ -1,0 +1,83 @@
+---
+import { cn } from '@/utils/helpers';
+
+interface Props {
+  children?: any;
+  class?: string;
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+  size?: 'display' | 'xl' | 'lg' | 'base' | 'sm' | 'xs';
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  color?: 'default' | 'muted' | 'primary' | 'accent' | 'heading';
+  align?: 'left' | 'center' | 'right';
+  gradient?: boolean;
+  /** Atributos HTML adicionales (id, role, aria-*, data-*). */
+  [key: string]: any;
+}
+
+const {
+  children,
+  class: className = '',
+  as: Tag = 'p',
+  size = 'base',
+  weight = 'normal',
+  color = 'default',
+  align = 'left',
+  gradient = false,
+  ...rest
+} = Astro.props;
+
+const sizes = {
+  display: 'text-fluid-4xl font-heading',
+  xl: 'text-fluid-3xl font-heading',
+  lg: 'text-fluid-2xl font-heading',
+  base: 'text-fluid-xl font-heading',
+  sm: 'text-fluid-lg',
+  xs: 'text-fluid-base',
+};
+
+const weights = {
+  normal: 'font-normal',
+  medium: 'font-medium',
+  semibold: 'font-semibold',
+  bold: 'font-bold',
+};
+
+const colors = {
+  default: 'text-slate-900 dark:text-slate-100',
+  muted: 'text-slate-600 dark:text-slate-400',
+  primary: 'text-brand-600 dark:text-brand-400',
+  accent: 'text-accent-600 dark:text-accent-400',
+  heading: 'text-slate-900 dark:text-white',
+};
+
+const alignments = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+};
+
+const gradientStyle = gradient
+  ? 'bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 bg-clip-text text-transparent'
+  : '';
+---
+
+<style>
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+</style>
+
+<Tag
+  class={cn(
+    sizes[size],
+    weights[weight],
+    colors[color],
+    alignments[align],
+    gradientStyle,
+    className
+  )}
+  {...rest}
+>
+  <slot>{children}</slot>
+</Tag>

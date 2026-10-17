@@ -1,0 +1,171 @@
+---
+import { formatDateRange } from '@/utils/helpers';
+import type { CollectionEntry } from 'astro:content';
+import type { ProjectData } from '@/content/config';
+import Card from '@/components/ui/Card.astro';
+import Typography from '@/components/ui/Typography.astro';
+import Badge from '@/components/ui/Badge.astro';
+import Button from '@/components/ui/Button.astro';
+import Flex from '@/components/ui/Flex.astro';
+import Icon from '@/components/ui/Icon.astro';
+import type { IconName } from '@/utils/icons';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  variant?: 'default' | 'compact';
+}
+
+const { project, variant = 'default' } = Astro.props;
+// `project.data` puede ser `any` (inferencia de Astro): se anota con el tipo
+// del schema para tipar de verdad `status`, `technologies`, etc.
+const data: ProjectData = project.data;
+const slug = project.slug;
+
+// Sólo se usa `variant` (lo pinta <Badge>); el estado textual va en `label`.
+const statusConfig = {
+  'En producción': { variant: 'success' as const },
+  'En desarrollo': { variant: 'info' as const },
+  Completado: { variant: 'default' as const },
+  Archivado: { variant: 'warning' as const },
+};
+
+const status = statusConfig[data.status] || statusConfig['En desarrollo'];
+
+// Placeholder de thumbnail sin captura: geometría tipo logo de la tech principal.
+function getProjectIcon(techs: string[]): IconName {
+  const primary = techs[0]?.toLowerCase() || '';
+  if (primary.includes('angular')) return 'triangle';
+  if (primary.includes('node')) return 'hexagon';
+  if (primary.includes('graphql')) return 'diamond';
+  if (primary.includes('mongo')) return 'leaf';
+  return 'package';
+}
+---
+
+<!-- La elevación/hover vive en <Card> (shadow-sm → shadow-soft en hover);
+     aquí sólo el grupo para los efectos internos de la tarjeta. -->
+<article class="group relative overflow-hidden">
+  <Card class="flex h-full flex-col" padded={false} hover={variant !== 'compact'}>
+    <!-- Thumbnail -->
+    <div class="relative aspect-video overflow-hidden rounded-t-2xl bg-slate-100 dark:bg-slate-800">
+      {
+        data.images && data.images.length > 0 ? (
+          <img
+            src={data.images[0]}
+            alt={`Captura de ${data.name}`}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div class="flex h-full w-full items-center justify-center text-slate-400 dark:text-slate-500">
+            <Icon name={getProjectIcon(data.technologies)} size="2xl" class="opacity-60" />
+          </div>
+        )
+      }
+      <div class="absolute right-3 top-3">
+        <Badge variant={status.variant} label={data.status} dot data-status={data.status} />
+      </div>
+      <div
+        class="absolute bottom-3 left-3 right-3 flex gap-2 opacity-0 transition-opacity duration-fast group-hover:opacity-100"
+      >
+        <Button href={`/projects/${slug}`} variant="primary" size="sm" class="flex-1">
+          Ver detalle
+        </Button>
+        {
+          data.github && (
+            <Button
+              href={data.github}
+              variant="ghost"
+              size="sm"
+              external
+              class="flex-1"
+              aria-label={`Ver repositorio de ${data.name}`}
+            >
+              <Icon name="github" size="sm" />
+            </Button>
+          )
+        }
+        {
+          data.demo && (
+            <Button
+              href={data.demo}
+              variant="ghost"
+              size="sm"
+              external
+              class="flex-1"
+              aria-label={`Ver demo de ${data.name}`}
+            >
+              <Icon name="globe" size="sm" />
+            </Button>
+          )
+        }
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="flex flex-1 flex-col p-5 md:p-6">
+      <div class="mb-3 flex items-start justify-between gap-2">
+        <Typography
+          as="h3"
+          size="lg"
+          weight="semibold"
+          color="heading"
+          class="line-clamp-1 transition-colors group-hover:text-brand-600 dark:group-hover:text-brand-400"
+        >
+          {data.name}
+        </Typography>
+      </div>
+
+      <Typography as="p" size="sm" color="muted" class="mb-4 line-clamp-2 flex-1">
+        {data.description}
+      </Typography>
+
+      <!-- Resultado medible (opcional, definido en el frontmatter del proyecto) -->
+      {
+        data.result && (
+          <div class="mb-4 flex items-start gap-2 rounded-xl border border-accent-200/60 bg-accent-50 px-3 py-2 dark:border-accent-800/60 dark:bg-accent-900/20">
+            <Icon
+              name="trending-up"
+              size="sm"
+              class="mt-0.5 text-accent-600 dark:text-accent-400"
+            />
+            <p class="text-fluid-xs text-slate-700 dark:text-slate-300">{data.result}</p>
+          </div>
+        )
+      }
+
+      <!-- Tech stack -->
+      <Flex gap="sm" wrap class="mb-4" role="list" aria-label="Tecnologías utilizadas">
+        {
+          data.technologies.slice(0, 5).map((tech) => (
+            <span
+              class="rounded-lg border border-slate-200 bg-slate-100 px-2 py-1 text-fluid-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+              role="listitem"
+            >
+              {tech}
+            </span>
+          ))
+        }
+        {
+          data.technologies.length > 5 && (
+            <span class="rounded-lg border border-slate-200 bg-slate-100 px-2 py-1 text-fluid-xs font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400">
+              +{data.technologies.length - 5}
+            </span>
+          )
+        }
+      </Flex>
+
+      <!-- Meta -->
+      <Flex gap="md" class="text-fluid-xs text-slate-500 dark:text-slate-400">
+        <span class="flex items-center gap-1">
+          <Icon name="calendar" size="xs" />
+          {formatDateRange(data.startDate, data.endDate)}
+        </span>
+        <span class="flex items-center gap-1">
+          <Icon name="user" size="xs" />
+          {data.role}
+        </span>
+      </Flex>
+    </div>
+  </Card>
+</article>

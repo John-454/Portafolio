@@ -1,0 +1,54 @@
+---
+import { cn } from '@/utils/helpers';
+interface Props {
+  children?: any;
+  class?: string;
+  tag?: 'section' | 'div' | 'article' | 'main' | 'aside';
+  id?: string;
+  padded?: boolean;
+  fullWidth?: boolean;
+  bg?: 'none' | 'surface' | 'muted' | 'brand' | 'gradient';
+  /**
+   * Revela la sección al entrar en el viewport (una sola vez). El Hero lo
+   * desactiva: tiene su propia animación de entrada.
+   */
+  reveal?: boolean;
+  /** Atributos HTML adicionales (role, aria-*, data-*). */
+  [key: string]: any;
+}
+
+const {
+  children,
+  class: className = '',
+  tag: Tag = 'section',
+  id,
+  padded = true,
+  fullWidth = false,
+  bg = 'none',
+  reveal = true,
+  ...rest
+} = Astro.props;
+
+// Ritmo vertical unificado en todo el sitio (64px móvil → 120px desktop).
+const padding = padded ? 'py-fluid-16 md:py-fluid-20 lg:py-fluid-24' : '';
+const width = fullWidth ? 'w-full' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8';
+const backgrounds = {
+  none: '',
+  surface: 'bg-white dark:bg-surface-dark',
+  muted: 'bg-slate-50 dark:bg-slate-900/50',
+  brand: 'bg-brand-600 dark:bg-brand-700',
+  gradient:
+    'bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-900/50 dark:via-slate-900 dark:to-slate-900/50',
+};
+---
+
+<!-- scroll-mt: compensa el header fixed para que los anclajes del nav no
+     dejen el título tapado. -->
+<Tag
+  id={id}
+  class={cn('relative scroll-mt-20 md:scroll-mt-24', padding, width, backgrounds[bg], className)}
+  data-reveal={reveal ? '' : undefined}
+  {...rest}
+>
+  <slot>{children}</slot>
+</Tag>

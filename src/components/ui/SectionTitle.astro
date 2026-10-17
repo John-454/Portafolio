@@ -1,0 +1,81 @@
+---
+import { cn } from '@/utils/helpers';
+import Icon from './Icon.astro';
+import type { IconName } from '@/utils/icons';
+
+interface Props {
+  children?: any;
+  class?: string;
+  level?: 1 | 2 | 3;
+  icon?: IconName;
+  /** Etiqueta pequeña en brand sobre el título (patrón de encabezado unificado). */
+  eyebrow?: string;
+  variant?: 'default' | 'accent' | 'minimal';
+  /** Atributos HTML adicionales (id, role, aria-*). */
+  [key: string]: any;
+}
+
+const {
+  children,
+  class: className = '',
+  level = 2,
+  icon,
+  eyebrow,
+  variant = 'default',
+  ...rest
+} = Astro.props;
+
+const Tag = `h${level}` as 'h1' | 'h2' | 'h3';
+
+const variants = {
+  default: 'text-slate-900 dark:text-white',
+  accent: 'text-brand-600 dark:text-brand-400',
+  minimal: 'text-slate-600 dark:text-slate-400',
+};
+
+// Los títulos llevan tracking/leading acordes a su nivel (tokens `title` y
+// `display` del theme de Tailwind) para una jerarquía tipográfica compacta.
+const sizes = {
+  1: 'text-fluid-3xl md:text-fluid-4xl tracking-display leading-display',
+  2: 'text-fluid-2xl md:text-fluid-3xl tracking-title leading-title',
+  3: 'text-fluid-xl md:text-fluid-2xl tracking-title leading-title',
+};
+
+const hasDescription = Astro.slots.has('description');
+---
+
+<!-- Patrón de encabezado de sección: eyebrow → título → descripción. -->
+<div class={cn('section-heading', className)} {...rest}>
+  {eyebrow && <p class="section-eyebrow">{eyebrow}</p>}
+  <Tag class={cn('section-title', variants[variant], sizes[level])}>
+    {
+      icon && (
+        <Icon
+          name={icon}
+          size={level === 1 ? 'xl' : 'lg'}
+          class="text-brand-600 dark:text-brand-400"
+        />
+      )
+    }
+    <span class="block text-balance"><slot /></span>
+  </Tag>
+  {
+    hasDescription && (
+      <div class="section-description">
+        <slot name="description" />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .section-eyebrow {
+    @apply mb-2 block text-fluid-xs font-semibold uppercase tracking-widest text-brand-600 dark:text-brand-400;
+  }
+  .section-title {
+    @apply flex items-center gap-3 font-heading font-bold;
+  }
+  .section-description {
+    @apply mt-3 max-w-2xl text-fluid-base text-slate-600 dark:text-slate-400;
+  }
+</style>
