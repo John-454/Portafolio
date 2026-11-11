@@ -12,6 +12,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+# log del dev server (artifacto de sesión, no forma parte del proyecto)
+.out
 
 # variables de entorno (nunca se suben; la plantilla de ejemplo sí)
 .env

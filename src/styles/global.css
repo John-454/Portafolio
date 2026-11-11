@@ -45,6 +45,15 @@
     }
   }
 
+  /* Controles nativos (inputs, selects, scrollbars) siguen al tema activo. */
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;

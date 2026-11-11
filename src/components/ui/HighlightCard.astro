@@ -14,7 +14,7 @@ const { icon, title, description, level = 3 } = Astro.props;
 ---
 
 <div
-  class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-normal hover:border-brand-300/50 hover:shadow-soft dark:border-slate-700 dark:bg-slate-800 dark:shadow-none dark:hover:border-brand-700/50 dark:hover:shadow-soft-dark"
+  class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-normal hover:border-brand-300/50 hover:shadow-soft dark:border-slate-700 dark:bg-slate-800 dark:shadow-none dark:hover:border-brand-700/50 dark:hover:shadow-soft-dark"
 >
   <Icon name={icon} size="xl" class="mb-3 text-brand-600 dark:text-brand-400" />
   <Typography as={level === 2 ? 'h2' : 'h3'} weight="semibold" color="heading">{title}</Typography>

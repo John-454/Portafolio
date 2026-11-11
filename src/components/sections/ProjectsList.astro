@@ -52,7 +52,7 @@ const { titleLevel = 2 } = Astro.props;
         <button
           data-filter="all"
           class={cn(
-            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all',
+            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-colors',
             'bg-brand-600 text-white'
           )}
           aria-pressed="true"
@@ -62,7 +62,7 @@ const { titleLevel = 2 } = Astro.props;
         <button
           data-filter="En producción"
           class={cn(
-            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all',
+            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-colors',
             'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30'
           )}
           aria-pressed="false"
@@ -72,7 +72,7 @@ const { titleLevel = 2 } = Astro.props;
         <button
           data-filter="En desarrollo"
           class={cn(
-            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all',
+            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-colors',
             'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30'
           )}
           aria-pressed="false"
@@ -82,7 +82,7 @@ const { titleLevel = 2 } = Astro.props;
         <button
           data-filter="Completado"
           class={cn(
-            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all',
+            'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-colors',
             'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30'
           )}
           aria-pressed="false"
@@ -150,13 +150,13 @@ const { titleLevel = 2 } = Astro.props;
     // Un solo set de clases por chip/botón: activo = brand sólido, reposo =
     // gris. El estado real vive en `aria-pressed`; esto es sólo estética.
     const STATUS_ACTIVE =
-      'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all bg-brand-600 text-white';
+      'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-colors bg-brand-600 text-white';
     const STATUS_IDLE =
-      'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30';
+      'filter-btn px-3 py-1.5 rounded-full text-fluid-sm font-medium transition-colors bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30';
     const TECH_ACTIVE =
       'tech-filter px-2.5 py-1 rounded-full text-fluid-xs font-medium bg-brand-600 text-white';
     const TECH_IDLE =
-      'tech-filter px-2.5 py-1 rounded-full text-fluid-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-all';
+      'tech-filter px-2.5 py-1 rounded-full text-fluid-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-100 dark:hover:bg-brand-900/30 transition-colors';
 
     function setPressed(btn: HTMLElement, active: boolean, activeClass: string, idleClass: string) {
       btn.setAttribute('aria-pressed', String(active));
