@@ -291,16 +291,6 @@ const status = statusConfig[data.status] || statusConfig['En desarrollo'];
             }
           </Stack>
         </section>
-
-        <!-- Full Content (MDX body) -->
-        {
-          project.body && (
-            <section
-              class="prose prose-slate dark:prose-invert max-w-none"
-              set:html={project.body}
-            />
-          )
-        }
       </div>
 
       <!-- Sidebar -->

@@ -18,7 +18,6 @@ export async function GET(context) {
       description: project.data.description,
       pubDate: new Date(project.data.startDate),
       categories: project.data.technologies,
-      customData: `<content:encoded><![CDATA[${project.body || project.data.description}]]></content:encoded>`,
     })),
     customData: `<language>es-CO</language><atom:link href="${context.site}rss.xml" rel="self" type="application/rss+xml" />`,
   });
