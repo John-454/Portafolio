@@ -15,13 +15,20 @@ import { personalInfo } from '@/data/personal';
 // no haya variables de entorno definidas.
 const formspreeEndpoint =
   import.meta.env.PUBLIC_FORMSPREE_ENDPOINT || 'https://formspree.io/f/your-form-id';
+
+interface Props {
+  /** Nivel del título: 1 cuando la sección abre su propia página (h1), 2 en el home. */
+  titleLevel?: 1 | 2;
+}
+
+const { titleLevel = 2 } = Astro.props;
 ---
 
 <Section id="contact" bg="muted">
   <div class="grid gap-12 lg:grid-cols-2 lg:gap-16">
     <!-- Left: Info -->
     <div class="space-y-8">
-      <SectionTitle level={2} icon="message-circle" eyebrow="Hablemos">
+      <SectionTitle level={titleLevel} icon="message-circle" eyebrow="Hablemos">
         Contacto
         <p slot="description">
           ¿Tienes un proyecto en mente? ¿Necesitas ayuda con arquitectura, seguridad o
@@ -74,7 +81,9 @@ const formspreeEndpoint =
           >
             <Icon name="clock" />
           </div>
-          <Typography as="h4" weight="semibold" color="heading">Disponibilidad</Typography>
+          <Typography as={titleLevel === 1 ? 'h2' : 'h3'} weight="semibold" color="heading"
+            >Disponibilidad</Typography
+          >
         </Flex>
         <Typography as="p" color="muted">
           {personalInfo.availability}. Abierto a oportunidades de tiempo completo, contratos
@@ -86,8 +95,12 @@ const formspreeEndpoint =
     <!-- Right: Form -->
     <div>
       <Card padded class="sticky top-24">
-        <Typography as="h3" size="xl" weight="semibold" color="heading" class="mb-2"
-          >Enviar mensaje</Typography
+        <Typography
+          as={titleLevel === 1 ? 'h2' : 'h3'}
+          size="xl"
+          weight="semibold"
+          color="heading"
+          class="mb-2">Enviar mensaje</Typography
         >
         <Typography as="p" size="sm" color="muted" class="mb-6"
           >Te responderé lo antes posible.</Typography
@@ -135,7 +148,7 @@ const formspreeEndpoint =
             name="message"
             type="textarea"
             required
-            placeholder="Cuéntame sobre tu proyecto, necesidades o consulta..."
+            placeholder="Cuéntame sobre tu proyecto, necesidades o consulta…"
             rows={5}
           />
 
@@ -174,46 +187,140 @@ const formspreeEndpoint =
 </Section>
 
 <script>
-  // Form handling with Formspree
+  // Envío a Formspree + validación inline propia. El `novalidate` del form
+  // desactiva la validación nativa: aquí la reemplazamos por errores junto
+  // al campo (role="alert" + aria-describedby), foco al primer error al
+  // enviar, revalidación al escribir y chequeo de formato al salir del campo.
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('contact-form') as HTMLFormElement;
     const status = document.getElementById('form-status');
+    if (!form || !status) return;
 
-    if (form && status) {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
-        const originalText = submitBtn.textContent;
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Enviando...';
+    // Cada error dice qué falta y cómo corregirlo, en tono del sitio.
+    const validators: Record<string, (value: string) => string> = {
+      name: (value) => (value.trim() ? '' : 'Escribe tu nombre para que sepa cómo llamarte.'),
+      email: (value) => {
+        if (!value.trim()) return 'Necesito tu email para poder responderte.';
+        return EMAIL_RE.test(value.trim())
+          ? ''
+          : 'Revisa el formato: debería ser algo como tu@email.com.';
+      },
+      subject: (value) => (value.trim() ? '' : 'Añade un asunto para orientar tu mensaje.'),
+      message: (value) => {
+        if (!value.trim()) return 'Cuéntame en qué puedo ayudarte.';
+        return value.trim().length >= 10 ? '' : 'Cuéntame un poco más (mínimo 10 caracteres).';
+      },
+    };
 
-        try {
-          const formData = new FormData(form);
-          const response = await fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: { Accept: 'application/json' },
-          });
+    const fields = Object.keys(validators)
+      .map((id) => form.elements.namedItem(id))
+      .filter((el): el is HTMLInputElement | HTMLTextAreaElement => el instanceof HTMLElement);
 
-          if (response.ok) {
-            status.className =
-              'block p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 border border-accent-300 dark:border-accent-700 text-accent-800 dark:text-accent-400';
-            status.textContent = '¡Mensaje enviado! Te responderé pronto.';
-            form.reset();
-          } else {
-            throw new Error('Error al enviar');
-          }
-        } catch {
-          status.className =
-            'block p-4 rounded-xl bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-400';
-          status.textContent =
-            'Hubo un error. Inténtalo de nuevo o escríbeme directamente por email.';
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
+    function setFieldError(field: HTMLInputElement | HTMLTextAreaElement, message: string) {
+      const errorId = `${field.id}-error`;
+      if (!message) {
+        document.getElementById(errorId)?.remove();
+        field.removeAttribute('aria-invalid');
+        if (field.getAttribute('aria-describedby') === errorId) {
+          field.removeAttribute('aria-describedby');
         }
-      });
+        return;
+      }
+      let box = document.getElementById(errorId) as HTMLParagraphElement | null;
+      if (!box) {
+        box = document.createElement('p');
+        box.id = errorId;
+        box.setAttribute('role', 'alert');
+        box.className =
+          'mt-1.5 flex items-center gap-1 text-fluid-xs text-red-500 dark:text-red-400';
+        box.innerHTML =
+          '<svg class="h-3.5 w-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg><span></span>';
+        field.parentElement?.appendChild(box);
+      }
+      const text = box.querySelector('span');
+      if (text) text.textContent = message;
+      field.setAttribute('aria-invalid', 'true');
+      field.setAttribute('aria-describedby', errorId);
     }
+
+    function validateField(field: HTMLInputElement | HTMLTextAreaElement) {
+      const validate = validators[field.id];
+      if (!validate) return true;
+      const message = validate(field.value);
+      setFieldError(field, message);
+      return !message;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // 1) Validar todo antes de enviar y llevar el foco al primer error.
+      let firstInvalid: HTMLInputElement | HTMLTextAreaElement | null = null;
+      for (const field of fields) {
+        if (!validateField(field) && !firstInvalid) firstInvalid = field;
+      }
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return;
+      }
+
+      const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando…';
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: { Accept: 'application/json' },
+        });
+
+        if (response.ok) {
+          fields.forEach((field) => setFieldError(field, ''));
+          status.className =
+            'block p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 border border-accent-300 dark:border-accent-700 text-accent-800 dark:text-accent-400';
+          status.textContent = '¡Mensaje enviado! Te responderé pronto.';
+          form.reset();
+        } else {
+          throw new Error('Error al enviar');
+        }
+      } catch {
+        status.className =
+          'block p-4 rounded-xl bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-400';
+        status.textContent =
+          'Hubo un error. Inténtalo de nuevo o escríbeme directamente por email.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+
+    // 2) Tras el primer intento, corregir sobre la marcha: al escribir sólo
+    //    en campos ya marcados (no molestar a quien todavía no envió nada).
+    form.addEventListener('input', (e) => {
+      const target = e.target;
+      if (
+        (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) &&
+        target.getAttribute('aria-invalid') === 'true'
+      ) {
+        validateField(target);
+      }
+    });
+
+    // 3) Al salir de un campo con contenido, chequear formato (p. ej. email)
+    //    sin mostrar errores en campos vacías que el usuario ni ha tocado.
+    form.addEventListener('focusout', (e) => {
+      const target = e.target;
+      if (
+        (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) &&
+        target.value.trim()
+      ) {
+        validateField(target);
+      }
+    });
   });
 </script>

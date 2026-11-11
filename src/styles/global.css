@@ -31,8 +31,18 @@
 
   html {
     scroll-behavior: smooth;
+    /* Offset para que el header fixed no tape el destino de los anclajes,
+       del skip link ni del foco con Tab. Un solo punto de control que
+       cubre todo el documento (antes era scroll-mt por sección). */
+    scroll-padding-top: 5rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      scroll-padding-top: 6rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

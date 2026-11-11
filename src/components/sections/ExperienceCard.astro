@@ -22,8 +22,10 @@ interface Props {
     url?: string;
   };
   index: number;
+  /** Nivel del título de la tarjeta: 4 bajo un h3 de sub-sección, 3 bajo un h2 de página. */
+  level?: 3 | 4;
 }
-const { exp } = Astro.props;
+const { exp, level = 4 } = Astro.props;
 ---
 
 <article class="relative" role="listitem">
@@ -44,8 +46,12 @@ const { exp } = Astro.props;
     >
       <Flex gap="md" wrap class="mb-3" align="start">
         <div class="min-w-0 flex-1">
-          <Typography as="h4" size="lg" weight="semibold" color="heading" class="truncate"
-            >{exp.title}</Typography
+          <Typography
+            as={level === 3 ? 'h3' : 'h4'}
+            size="lg"
+            weight="semibold"
+            color="heading"
+            class="truncate">{exp.title}</Typography
           >
           <Typography as="p" size="sm" color="muted" class="mt-0.5"
             >{exp.organization}{exp.location && ` · ${exp.location}`}</Typography
@@ -64,7 +70,13 @@ const { exp } = Astro.props;
       {
         exp.responsibilities.length > 0 && (
           <div class="mb-4">
-            <Typography as="h5" size="sm" weight="semibold" color="heading" class="mb-2">
+            <Typography
+              as={level === 3 ? 'h4' : 'h5'}
+              size="sm"
+              weight="semibold"
+              color="heading"
+              class="mb-2"
+            >
               Responsabilidades clave
             </Typography>
             <ul class="space-y-1.5" role="list">
@@ -95,7 +107,13 @@ const { exp } = Astro.props;
       {
         exp.achievements && exp.achievements.length > 0 && (
           <div class="mb-4">
-            <Typography as="h5" size="sm" weight="semibold" color="heading" class="mb-2">
+            <Typography
+              as={level === 3 ? 'h4' : 'h5'}
+              size="sm"
+              weight="semibold"
+              color="heading"
+              class="mb-2"
+            >
               Logros destacados
             </Typography>
             <ul class="space-y-1.5" role="list">

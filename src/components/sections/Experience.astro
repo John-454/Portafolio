@@ -8,11 +8,18 @@ import Badge from '@/components/ui/Badge.astro';
 import ExperienceCard from './ExperienceCard.astro';
 import EducationCard from './EducationCard.astro';
 import { experience, education, certifications } from '@/data/experience';
+
+interface Props {
+  /** Nivel del título: 1 cuando la sección abre su propia página (h1), 2 en el home. */
+  titleLevel?: 1 | 2;
+}
+
+const { titleLevel = 2 } = Astro.props;
 ---
 
 <Section id="experience" bg="surface">
   <div class="mb-12 md:mb-16">
-    <SectionTitle level={2} icon="briefcase" eyebrow="Trayectoria">
+    <SectionTitle level={titleLevel} icon="briefcase" eyebrow="Trayectoria">
       Experiencia Profesional
       <p slot="description">
         Mi trayectoria combina desarrollo de software práctico con experiencia docente. Cada rol ha
@@ -25,7 +32,7 @@ import { experience, education, certifications } from '@/data/experience';
   <!-- Professional Experience -->
   <div class="mb-16">
     <Typography
-      as="h3"
+      as={titleLevel === 1 ? 'h2' : 'h3'}
       size="xl"
       weight="semibold"
       color="heading"
@@ -50,7 +57,7 @@ import { experience, education, certifications } from '@/data/experience';
     <Stack space="lg" role="list" aria-label="Experiencia profesional">
       {
         experience.map((exp, index) => {
-          return <ExperienceCard exp={exp} index={index} />;
+          return <ExperienceCard exp={exp} index={index} level={titleLevel === 1 ? 3 : 4} />;
         })
       }
     </Stack>
@@ -59,7 +66,7 @@ import { experience, education, certifications } from '@/data/experience';
   <!-- Education -->
   <div class="mb-16">
     <Typography
-      as="h3"
+      as={titleLevel === 1 ? 'h2' : 'h3'}
       size="xl"
       weight="semibold"
       color="heading"
@@ -85,7 +92,7 @@ import { experience, education, certifications } from '@/data/experience';
     <Stack space="md" role="list" aria-label="Formación académica">
       {
         education.map((edu, index) => {
-          return <EducationCard edu={edu} index={index} />;
+          return <EducationCard edu={edu} index={index} level={titleLevel === 1 ? 3 : 4} />;
         })
       }
     </Stack>
@@ -96,7 +103,7 @@ import { experience, education, certifications } from '@/data/experience';
     certifications.length > 0 && (
       <div>
         <Typography
-          as="h3"
+          as={titleLevel === 1 ? 'h2' : 'h3'}
           size="xl"
           weight="semibold"
           color="heading"

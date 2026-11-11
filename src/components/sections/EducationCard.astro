@@ -18,8 +18,10 @@ interface Props {
     technologies?: string[];
   };
   index: number;
+  /** Nivel del título de la tarjeta: 4 bajo un h3 de sub-sección, 3 bajo un h2 de página. */
+  level?: 3 | 4;
 }
-const { edu } = Astro.props;
+const { edu, level = 4 } = Astro.props;
 ---
 
 <article class="relative" role="listitem">
@@ -40,8 +42,12 @@ const { edu } = Astro.props;
     >
       <Flex gap="md" wrap class="mb-2" align="start">
         <div class="min-w-0 flex-1">
-          <Typography as="h4" size="base" weight="semibold" color="heading" class="truncate"
-            >{edu.title}</Typography
+          <Typography
+            as={level === 3 ? 'h3' : 'h4'}
+            size="base"
+            weight="semibold"
+            color="heading"
+            class="truncate">{edu.title}</Typography
           >
           <Typography as="p" size="sm" color="muted" class="mt-0.5">{edu.organization}</Typography>
         </div>

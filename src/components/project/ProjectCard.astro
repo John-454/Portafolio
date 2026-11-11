@@ -13,9 +13,11 @@ import type { IconName } from '@/utils/icons';
 interface Props {
   project: CollectionEntry<'projects'>;
   variant?: 'default' | 'compact';
+  /** Nivel del título: 3 bajo un h2 de sección (destacados), 2 bajo un h1 de página. */
+  level?: 2 | 3;
 }
 
-const { project, variant = 'default' } = Astro.props;
+const { project, variant = 'default', level = 3 } = Astro.props;
 // `project.data` puede ser `any` (inferencia de Astro): se anota con el tipo
 // del schema para tipar de verdad `status`, `technologies`, etc.
 const data: ProjectData = project.data;
@@ -106,7 +108,7 @@ function getProjectIcon(techs: string[]): IconName {
     <div class="flex flex-1 flex-col p-5 md:p-6">
       <div class="mb-3 flex items-start justify-between gap-2">
         <Typography
-          as="h3"
+          as={level === 2 ? 'h2' : 'h3'}
           size="lg"
           weight="semibold"
           color="heading"

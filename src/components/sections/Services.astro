@@ -15,11 +15,18 @@ const categoryIcons: Record<string, IconName> = {
   data: 'database',
   emerging: 'rocket',
 };
+
+interface Props {
+  /** Nivel del título: 1 cuando la sección abre su propia página (h1), 2 en el home. */
+  titleLevel?: 1 | 2;
+}
+
+const { titleLevel = 2 } = Astro.props;
 ---
 
 <Section id="services" bg="muted">
   <div class="mb-12 md:mb-16">
-    <SectionTitle level={2} icon="wrench" eyebrow="Áreas de trabajo">
+    <SectionTitle level={titleLevel} icon="wrench" eyebrow="Áreas de trabajo">
       Servicios
       <p slot="description">
         Ayudo a empresas y equipos a construir software de calidad: seguro, escalable y mantenible.
@@ -33,7 +40,7 @@ const categoryIcons: Record<string, IconName> = {
       return (
         <div class="mb-16" id={category.key}>
           <Typography
-            as="h3"
+            as={titleLevel === 1 ? 'h2' : 'h3'}
             size="xl"
             weight="semibold"
             color="heading"
@@ -52,7 +59,7 @@ const categoryIcons: Record<string, IconName> = {
             {category.services.map((serviceId) => {
               const service = services.find((s) => s.id === serviceId);
               if (!service) return null;
-              return <ServiceCard service={service} />;
+              return <ServiceCard service={service} level={titleLevel === 1 ? 3 : 4} />;
             })}
           </Grid>
         </div>
@@ -62,8 +69,12 @@ const categoryIcons: Record<string, IconName> = {
 
   <!-- CTA -->
   <div class="border-t border-slate-200 pt-8 text-center dark:border-slate-700">
-    <Typography as="h3" size="xl" weight="semibold" color="heading" class="mb-4"
-      >¿No ves lo que necesitas?</Typography
+    <Typography
+      as={titleLevel === 1 ? 'h2' : 'h3'}
+      size="xl"
+      weight="semibold"
+      color="heading"
+      class="mb-4">¿No ves lo que necesitas?</Typography
     >
     <Typography as="p" size="base" color="muted" class="mx-auto mb-6 max-w-xl">
       Cada proyecto es único. Si tienes un reto específico, hablemos y diseñamos la solución a

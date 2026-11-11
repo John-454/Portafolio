@@ -9,6 +9,13 @@ import HighlightCard from '@/components/ui/HighlightCard.astro';
 import Icon from '@/components/ui/Icon.astro';
 import { personalInfo } from '@/data/personal';
 import { skills } from '@/data/skills';
+
+interface Props {
+  /** Nivel del título: 1 cuando la sección abre su propia página (h1), 2 en el home. */
+  titleLevel?: 1 | 2;
+}
+
+const { titleLevel = 2 } = Astro.props;
 ---
 
 <Section id="about" bg="surface">
@@ -51,7 +58,7 @@ import { skills } from '@/data/skills';
 
     <!-- Right: Content -->
     <div class="space-y-8">
-      <SectionTitle level={2} icon="user" eyebrow="Perfil profesional">
+      <SectionTitle level={titleLevel} icon="user" eyebrow="Perfil profesional">
         Sobre Mí
         <p slot="description">{personalInfo.extendedBio}</p>
       </SectionTitle>
@@ -62,28 +69,32 @@ import { skills } from '@/data/skills';
           icon="target"
           title="Enfoque Actual"
           description="Apps seguras, escalables y mantenibles con TypeScript end-to-end"
+          level={titleLevel === 1 ? 2 : 3}
         />
         <HighlightCard
           icon="trending-up"
           title="Evolución"
           description="Application Security, DevSecOps, Cloud Security, IA aplicada"
+          level={titleLevel === 1 ? 2 : 3}
         />
         <HighlightCard
           icon="zap"
           title="Metodología"
           description="Clean Architecture, TDD, CI/CD, Code Review, Docs"
+          level={titleLevel === 1 ? 2 : 3}
         />
         <HighlightCard
           icon="handshake"
           title="Colaboración"
           description="Pair programming, mentoring, knowledge sharing, open source"
+          level={titleLevel === 1 ? 2 : 3}
         />
       </div>
 
       <!-- Top Skills -->
       <div>
         <Typography
-          as="h3"
+          as={titleLevel === 1 ? 'h2' : 'h3'}
           size="lg"
           weight="semibold"
           color="heading"

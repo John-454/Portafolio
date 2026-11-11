@@ -19,8 +19,10 @@ interface Props {
     process: string[];
     cta: string;
   };
+  /** Nivel del título de la tarjeta: 4 bajo un h3 de categoría, 3 bajo un h2 de página. */
+  level?: 3 | 4;
 }
-const { service } = Astro.props;
+const { service, level = 4 } = Astro.props;
 ---
 
 <article class="relative" role="listitem">
@@ -35,7 +37,9 @@ const { service } = Astro.props;
         <Icon name={service.icon} size="lg" />
       </div>
       <div class="flex-1">
-        <Typography as="h4" size="lg" weight="semibold" color="heading">{service.title}</Typography>
+        <Typography as={level === 3 ? 'h3' : 'h4'} size="lg" weight="semibold" color="heading"
+          >{service.title}</Typography
+        >
         <Typography as="p" size="sm" color="muted" class="mt-1"
           >{service.shortDescription}</Typography
         >
@@ -48,7 +52,7 @@ const { service } = Astro.props;
     <!-- Stack -->
     <div class="mb-5">
       <Typography
-        as="h5"
+        as={level === 3 ? 'h4' : 'h5'}
         size="xs"
         weight="semibold"
         color="heading"
@@ -63,7 +67,7 @@ const { service } = Astro.props;
     <!-- Features -->
     <div class="mb-5">
       <Typography
-        as="h5"
+        as={level === 3 ? 'h4' : 'h5'}
         size="xs"
         weight="semibold"
         color="heading"

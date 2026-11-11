@@ -42,11 +42,11 @@ const backgrounds = {
 };
 ---
 
-<!-- scroll-mt: compensa el header fixed para que los anclajes del nav no
-     dejen el título tapado. -->
+<!-- El offset del header fixed vive en `html { scroll-padding-top }`
+     (global.css): cubre anclajes, skip link y foco desde un solo sitio. -->
 <Tag
   id={id}
-  class={cn('relative scroll-mt-20 md:scroll-mt-24', padding, width, backgrounds[bg], className)}
+  class={cn('relative', padding, width, backgrounds[bg], className)}
   data-reveal={reveal ? '' : undefined}
   {...rest}
 >

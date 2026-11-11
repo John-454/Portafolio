@@ -10,11 +10,18 @@ import Input from '@/components/ui/Input.astro';
 import Button from '@/components/ui/Button.astro';
 
 const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
+
+interface Props {
+  /** Nivel del título: 1 cuando la sección abre su propia página (h1), 2 en el home. */
+  titleLevel?: 1 | 2;
+}
+
+const { titleLevel = 2 } = Astro.props;
 ---
 
 <Section id="projects" bg="muted">
   <div class="mb-10">
-    <SectionTitle level={2} icon="folder" eyebrow="Portafolio completo">
+    <SectionTitle level={titleLevel} icon="folder" eyebrow="Portafolio completo">
       Todos los Proyectos
       <p slot="description">
         Lista completa de proyectos de desarrollo de software. Filtra por tecnología o estado para
@@ -34,7 +41,7 @@ const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
         <Input
           id="project-search"
           type="search"
-          placeholder="Filtrar por nombre, tecnología..."
+          placeholder="Filtrar por nombre, tecnología…"
           class="w-64"
           aria-label="Buscar proyectos"
         />
@@ -95,6 +102,10 @@ const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
     </div>
   </div>
 
+  <!-- Región viva: anuncia el resultado del filtrado a lectores de pantalla
+       con un mensaje contextual (no un número suelto), sin mover el foco. -->
+  <div id="projects-status" class="sr-only" role="status" aria-atomic="true"></div>
+
   <!-- Projects Grid -->
   <div
     id="projects-grid"
@@ -104,7 +115,7 @@ const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
   >
     {
       projects.map((project) => {
-        return <ProjectCard project={project} />;
+        return <ProjectCard project={project} level={titleLevel === 1 ? 2 : 3} />;
       })
     }
   </div>
@@ -130,6 +141,7 @@ const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
     const clearBtn = document.getElementById('clear-filters');
     const emptyState = document.getElementById('empty-state');
     const grid = document.getElementById('projects-grid');
+    const statusEl = document.getElementById('projects-status');
 
     // Estos nodos son necesarios para el filtrado: sin ellos no hay nada
     // que actualizar, así que se sale en lugar de fallar por null.
@@ -182,7 +194,7 @@ const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
       let visibleCount = 0;
 
       projects.forEach((project) => {
-        const title = project.querySelector('h3')?.textContent?.toLowerCase() || '';
+        const title = project.querySelector('h2, h3')?.textContent?.toLowerCase() || '';
         const description = project.querySelector('p')?.textContent?.toLowerCase() || '';
         const techs = Array.from(project.querySelectorAll('[role="listitem"]')).map(
           (t) => t.textContent?.toLowerCase() || ''
@@ -207,6 +219,15 @@ const projects: CollectionEntry<'projects'>[] = await getCollection('projects');
 
       emptyState?.classList.toggle('hidden', visibleCount > 0);
       grid?.classList.toggle('hidden', visibleCount === 0);
+
+      // Anuncio para lectores de pantalla: mensaje contextual
+      // ("N proyectos…"), nunca un número suelto; `role="status"` ya es polite.
+      if (statusEl) {
+        statusEl.textContent =
+          visibleCount === 0
+            ? 'No hay proyectos que coincidan con los filtros actuales.'
+            : `${visibleCount} ${visibleCount === 1 ? 'proyecto' : 'proyectos'} coincide${visibleCount === 1 ? '' : 'n'} con los filtros actuales.`;
+      }
     }
 
     // Status filter
